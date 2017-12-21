@@ -1,0 +1,12 @@
+.block {
+    display: inline-block;
+   }
+ 
+ #diagram{
+   width:75%;
+ }
+ 
+ #palette{
+   width:15%;
+ }
+   

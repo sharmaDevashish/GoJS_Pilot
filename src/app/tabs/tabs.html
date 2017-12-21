@@ -1,0 +1,19 @@
+<ngb-tabset>
+        <ngb-tab title="Palette">
+          <ng-template ngbTabContent>
+              <app-form-editor
+                [map1]='paletteMap'>
+              </app-form-editor>
+          </ng-template>
+        </ngb-tab>
+        <ngb-tab title="Properties">
+            <ng-template ngbTabContent>
+              <div><label>Key: </label>{{node.key}}</div>
+              <div><label>Text: </label><input [(ngModel)]="data.text" name="text"></div>
+              <div><label>Color: </label><input [(ngModel)]="data.color" name="color"></div>
+              <div><label>Location: </label>{{node.location.x.toFixed(2)}}, {{node.location.y.toFixed(2)}}</div>
+              <div><label># Links: </label>{{node.linksConnected.count}}</div>
+            </ng-template>
+          </ngb-tab>
+      </ngb-tabset>
+      

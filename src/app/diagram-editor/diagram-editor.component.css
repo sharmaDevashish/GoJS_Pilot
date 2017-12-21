@@ -1,0 +1,19 @@
+.diagramsPanel {
+    width:100%;
+    white-space:nowrap;
+  }
+  
+  .diagramDiv {
+    border: 1px solid black;
+    
+    vertical-align: top;
+    width: 100%;
+    height: 400px;
+  }
+  
+  .paletteDiv {
+    border: 1px solid black;
+    vertical-align: top;
+    width: 19%;
+    height: 400px;
+  }
