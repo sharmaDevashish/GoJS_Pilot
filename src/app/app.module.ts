@@ -9,6 +9,7 @@ import { PrintPreviewComponent } from './diagram-editor/print-preview/print-prev
 import { Tabs } from './tabs/tabs';
 import { AppFormEditor } from './diagram-editor/form-component'
 import { EditorComponent} from './editor-component/editor.component'
+import { TreeViewComponent } from './treeView-palette/treeView.component'
 
 import { ExampleService } from './app-service/app.component.service';
 import { AppRoutingModule } from './/app-routing.module';
@@ -23,7 +24,8 @@ import { AppRoutingModule } from './/app-routing.module';
     PrintPreviewComponent,
     Tabs,
     AppFormEditor,
-    EditorComponent
+    EditorComponent,
+    TreeViewComponent
   ],
   imports: [
     BrowserModule,

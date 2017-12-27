@@ -30,6 +30,144 @@ export class DiagramEditorComponent implements OnInit {
   @Output()
   modelChanged = new EventEmitter<go.ChangedEvent>();
 
+  inputArray = [
+    { category:"Device1",
+      Name:"Controller1",
+      Type:"PID",
+      Description:"Device1 Desc",
+      Iports:["PV","SV","PB","Ti","Td"],
+      Oports:["MV"],
+      color: "#18499e"
+    },
+    { category:"Device2",
+      Name:"Device2",
+      Type:"Type2",
+      Description:"Device2 Desc",
+      Iports:["A1","A2"],
+      Oports:["B1"],
+      color: "#18499e"
+    }];
+
+  /*drawDiagramEditor(){
+
+    for(var it=0; it < this.inputArray.length;it++)
+    {if(!this.inputArray[it].Type.includes("Variable")){
+      var _makeportsinput = [];
+      var _makeportsoutput = [];
+
+      var templateItem = this.inputArray[it];
+
+      for(var j=0;j<templateItem.Iports.length;j++)
+          {
+           var iport = this.makePort(templateItem.Iports[j],true);
+          _makeportsinput.push(iport);
+          }
+      for(var j=0;j<templateItem.Oports.length;j++)
+          {
+          var oport=this.makePort(templateItem.Oports[j],false);
+          _makeportsoutput.push(oport);
+          }
+          this.makeTemplate(this.inputArray[it].Type,
+               this.inputArray[it].Name,
+               this.inputArray[it].color,
+               _makeportsinput,
+               _makeportsoutput
+              );         
+      }
+    }
+  }
+
+  public makePort(name, leftside) {
+    const ggm = go.GraphObject.make;
+    var port = ggm(go.Shape, "Rectangle",
+                 {
+                   fill: "gray", stroke: null,
+                   desiredSize: new go.Size(8, 8),
+                   portId: name,  // declare this object to be a "port"
+                   toMaxLinks: 1,  // don't allow more than one link into a port
+                   cursor: "pointer"  // show a different cursor to indicate potential link point
+                 });
+
+    var lab = ggm(go.TextBlock, name,  // the name of the port
+                { font :"10px Noto Sans",
+                  stroke :"#fff"
+       });
+
+    var panel = ggm(go.Panel, "Horizontal",
+                  { margin: new go.Margin(2, 0) });
+
+    // set up the port/panel based on which side of the node it will be on
+    if (leftside) {
+      port.toSpot = go.Spot.Left;
+      port.toLinkable = true;
+      lab.margin = new go.Margin(1, 0, 0, 1);
+      panel.alignment = go.Spot.TopLeft;
+      panel.add(port);
+      panel.add(lab);
+    } else {
+      port.fromSpot = go.Spot.Right;
+      port.fromLinkable = true;
+      lab.margin = new go.Margin(1, 1, 0, 0);
+      panel.alignment = go.Spot.TopRight;
+      panel.add(lab);
+      panel.add(port);
+    }
+    return panel;
+  }
+
+  public makeTemplate(typename,name, background, inports, outports) {
+    const ggm = go.GraphObject.make; 
+ 
+    var a=inports.length;
+    var node = ggm(go.Node, "Spot",{padding:0},//,dragComputation: avoidNodeOverlap},
+                 {selectionAdorned: false},
+                 new go.Binding("location", "loc",go.Point.parse).makeTwoWay(go.Point.stringify),
+       ggm(go.Panel, "Auto",
+         {width: 120,height:17*a,minSize:new go.Size(120,80)},
+         ggm(go.Shape, "RoundedRectangle",
+           {
+             fill: background, stroke: null, strokeWidth: 0,
+             spot1: go.Spot.TopLeft, spot2: go.Spot.BottomRight
+           }),
+         ggm(go.Panel, "Table",
+             {padding:0},
+           ggm(go.TextBlock, typename,
+             {
+               text:typename,
+               row: 0,
+               margin: 3,
+               maxSize: new go.Size(80, NaN),
+               stroke: "#fff",
+               font: "12px Noto Sans,Regular"
+             },
+             new go.Binding("text", typename).makeTwoWay()),
+           ggm(go.TextBlock,name,
+             {
+               text:name,
+               row: 1,
+               margin:  3,
+               editable: true,
+               maxSize: new go.Size(80, 40),
+               stroke: "#fff",
+               font: "bold 14px Noto Sans"
+             },
+             new go.Binding("text", name).makeTwoWay())
+         )
+       ),
+       ggm(go.Panel, "Vertical",
+         { alignment: go.Spot.Left,
+           alignmentFocus: new go.Spot(0, 0.5, -8, 0)
+         },
+         inports),
+       ggm(go.Panel, "Vertical",
+         { alignment: go.Spot.Right,
+           alignmentFocus: new go.Spot(1, 0.5, 8, 0)
+         },
+         outports)
+     );
+     this.diagram.nodeTemplateMap.add(typename, node);
+ }*/
+
   showGrid(){
     const ggm = go.GraphObject.make;
     var point = new go.Point(0,0)
@@ -77,9 +215,6 @@ printImage(){
         });
         img.className = 'images'+j;
         imagesArr.push(img.src);
-        /*sessionStorage.setItem("image"+j,img.src);
-        var a =JSON.stringify(j);
-        sessionStorage.setItem("j",a);*/
       }
     }
     var arr = JSON.stringify(imagesArr);
@@ -134,25 +269,11 @@ printImage(){
         $(go.Shape),
         $(go.Shape, { toArrow: "OpenTriangle" })
       );
-
-    /*this.palette = new go.Palette();
-    this.palette.nodeTemplateMap = this.diagram.nodeTemplateMap;
-    this.paletteMap = this.diagram.nodeTemplateMap;
-    console.log(this.paletteMap);
-
-    // initialize contents of Palette
-    this.palette.model.nodeDataArray =
-      [
-        { text: "Alpha", color: "lightblue" },
-        { text: "Beta", color: "orange" },
-        { text: "Gamma", color: "lightgreen" },
-        { text: "Delta", color: "pink" },
-        { text: "Epsilon", color: "yellow" }
-      ];*/
-  }
+}
 
   ngOnInit() {
     this.diagram.div = this.diagramRef.nativeElement;
     //this.palette.div = this.paletteRef.nativeElement;
+    //this.drawDiagramEditor();
   }
 }

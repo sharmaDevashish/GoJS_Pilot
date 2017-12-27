@@ -16,7 +16,9 @@ export class AppFormEditor implements OnInit,OnChanges {
     { text: "Beta", color: "orange" },
     { text: "Gamma", color: "lightgreen" },
     { text: "Delta", color: "pink" },
-    { text: "Epsilon", color: "yellow" }
+    { text: "Epsilon", color: "yellow" },
+    { text: "Controller1", color:"#18499e"},
+    { text: "Device2", color:"#18499e"}
   ];
 
   private palette1: go.Palette = new go.Palette();

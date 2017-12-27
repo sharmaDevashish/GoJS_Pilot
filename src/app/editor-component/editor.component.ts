@@ -26,6 +26,7 @@ export class EditorComponent implements OnInit{
   data: any;
   node: go.Node;
 
+
   showDetails(node: go.Node | null) {
     this.node = node;
     if (node) {
@@ -64,7 +65,12 @@ export class EditorComponent implements OnInit{
   }
 
   ngOnInit(){
+
     
+    
+    
+
+        
   }
 
   constructor(private _exampleService: ExampleService) {

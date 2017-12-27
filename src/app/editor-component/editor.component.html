@@ -1,6 +1,9 @@
 <div style="width:100%" class="row">
     <div id="diagram" class="col block">
-        <app-diagram-editor [model]="model" (nodeSelected)="showDetails($event)" (modelChanged)="onModelChanged($event)">
+        <app-diagram-editor 
+            [model]="model" 
+            (nodeSelected)="showDetails($event)" 
+            (modelChanged)="onModelChanged($event)">
         </app-diagram-editor>
     </div>
     <div id="palette" class="col-md-3 block">
