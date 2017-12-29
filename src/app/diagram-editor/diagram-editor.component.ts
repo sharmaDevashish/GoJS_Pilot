@@ -74,7 +74,8 @@ export class DiagramEditorComponent implements OnInit {
     this.diagram.linkTemplate =
         ggm(go.Link,
           // allow relinking
-          { relinkableFrom: true, relinkableTo: true },
+          { routing: go.Link.AvoidsNodes,relinkableFrom: true, relinkableTo: true, 
+            curve: go.Link.JumpOver },
           ggm(go.Shape),
           ggm(go.Shape, { toArrow: "OpenTriangle" })
         );
