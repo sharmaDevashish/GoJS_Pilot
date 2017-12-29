@@ -48,7 +48,36 @@ export class DiagramEditorComponent implements OnInit {
       color: "#18499e"
     }];
 
-  /*drawDiagramEditor(){
+  drawDiagramEditor(){
+
+    const ggm = go.GraphObject.make;
+    this.diagram = new go.Diagram();
+    this.diagram.initialContentAlignment = go.Spot.Center;
+    this.diagram.allowDrop = true;  // necessary for dragging from Palette
+    this.diagram.undoManager.isEnabled = true;
+    this.diagram.addDiagramListener("ChangedSelection",
+        e => {
+          const node = e.diagram.selection.first();
+          this.nodeSelected.emit(node instanceof go.Node ? node : null);
+        });
+    this.diagram.addModelChangedListener(e => e.isTransactionFinished && this.modelChanged.emit(e));
+
+    this.diagram.grid = 
+        ggm(go.Panel,"Grid",
+            {gridCellSize:new go.Size(20,20)},
+            ggm(go.Shape, "LineH", { stroke: "black",interval:10 }),
+            ggm(go.Shape, "LineV", { stroke: "black",interval:10 }),
+            ggm(go.Shape, "LineH", { stroke: "#E1E1E1",interval:1 }),
+            ggm(go.Shape, "LineV", { stroke: "#E1E1E1",interval:1 })
+        );
+
+    this.diagram.linkTemplate =
+        ggm(go.Link,
+          // allow relinking
+          { relinkableFrom: true, relinkableTo: true },
+          ggm(go.Shape),
+          ggm(go.Shape, { toArrow: "OpenTriangle" })
+        );
 
     for(var it=0; it < this.inputArray.length;it++)
     {if(!this.inputArray[it].Type.includes("Variable")){
@@ -166,7 +195,7 @@ export class DiagramEditorComponent implements OnInit {
          outports)
      );
      this.diagram.nodeTemplateMap.add(typename, node);
- }*/
+ }
 
   showGrid(){
     const ggm = go.GraphObject.make;
@@ -223,28 +252,9 @@ printImage(){
 }
 
   constructor(private router: Router) {
-    const $ = go.GraphObject.make;
-    this.diagram = new go.Diagram();
-    this.diagram.initialContentAlignment = go.Spot.Center;
-    this.diagram.allowDrop = true;  // necessary for dragging from Palette
-    this.diagram.undoManager.isEnabled = true;
-    this.diagram.addDiagramListener("ChangedSelection",
-        e => {
-          const node = e.diagram.selection.first();
-          this.nodeSelected.emit(node instanceof go.Node ? node : null);
-        });
-    this.diagram.addModelChangedListener(e => e.isTransactionFinished && this.modelChanged.emit(e));
-
-    this.diagram.grid = 
-        $(go.Panel,"Grid",
-            {gridCellSize:new go.Size(20,20)},
-            $(go.Shape, "LineH", { stroke: "black",interval:10 }),
-            $(go.Shape, "LineV", { stroke: "black",interval:10 }),
-            $(go.Shape, "LineH", { stroke: "#E1E1E1",interval:1 }),
-            $(go.Shape, "LineV", { stroke: "#E1E1E1",interval:1 })
-        );
-
-    this.diagram.nodeTemplate =
+    
+    this.drawDiagramEditor();
+    /*this.diagram.nodeTemplate =
       $(go.Node, "Auto",
         new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
         $(go.Shape,
@@ -260,20 +270,14 @@ printImage(){
         $(go.TextBlock,
           { margin: 8, editable: true },
           new go.Binding("text").makeTwoWay())
-      );
+      );*/
 
-    this.diagram.linkTemplate =
-      $(go.Link,
-        // allow relinking
-        { relinkableFrom: true, relinkableTo: true },
-        $(go.Shape),
-        $(go.Shape, { toArrow: "OpenTriangle" })
-      );
+    
 }
 
   ngOnInit() {
     this.diagram.div = this.diagramRef.nativeElement;
     //this.palette.div = this.paletteRef.nativeElement;
-    //this.drawDiagramEditor();
+    
   }
 }

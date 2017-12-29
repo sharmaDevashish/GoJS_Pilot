@@ -1,14 +1,4 @@
 <div>
     <div #paletteDiv1 id="paletteDiv1" class="paletteDiv1"></div>
-    <form *ngIf="node" #form="ngForm" (ngSubmit)="onCommitDetails()">
-            Node Details:
-            <div><label>Key: </label>{{node.key}}</div>
-            <div><label>Text: </label><input [(ngModel)]="data.text" name="text"></div>
-            <div><label>Color: </label><input [(ngModel)]="data.color" name="color"></div>
-            <div><label>Location: </label>{{node.location.x.toFixed(2)}}, {{node.location.y.toFixed(2)}}</div>
-            <div><label># Links: </label>{{node.linksConnected.count}}</div>
-            <button type="submit">Commit Details</button>
-            <button (click)="onCancelChanges()">Cancel Changes</button>
-    </form>
 </div>
 

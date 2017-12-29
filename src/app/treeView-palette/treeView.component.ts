@@ -103,22 +103,24 @@ export class TreeViewComponent implements OnInit{
                    
 
                     var paletteList = new Array(
-                      { 'key' : 'I4','parent' : '2', 'name' : 'one','color':'lightblue','text': "Alpha",'isTreeLeaf': true},
-                      { 'key' : 'I5','parent' : '2', 'name' : 'two', 'color':'orange','text': "Beta",'isTreeLeaf': true},
-                      { 'key' : 'I6','parent' : '2', 'name' : 'three','color':'lightgreen','text': "Gamma", 'isTreeLeaf': true},
-                      { 'key' : 'I7','parent' : '2', 'name' : 'four','color':'pink','text': "Delta", 'isTreeLeaf': true},
-                      { 'key' : 'I8','parent' : '2', 'name' : 'five','color':'yellow','text': "Epsilon", 'isTreeLeaf': true},
-                      { 'key' : 'I9','parent' : '2', 'name' : 'Controller1','color':'#18499e','text': "Controller1", 'isTreeLeaf': true},
-                      { 'key' : 'I10','parent' : '2', 'name' : 'Device2','color':'#18499e','text': "Device2", 'isTreeLeaf': true},
-                      { 'key' : '2' , 'name' : 'Test1','color':'yellow','text': "Epsilon", 'isTreeLeaf': false},
-                      { 'key' : '1' , 'name' : 'Test2','color':'yellow','text': "Epsilon", 'isTreeLeaf': false},
-                      { 'key' : 'I8','parent' : '1', 'name' : 'five','color':'yellow','text': "Epsilon", 'isTreeLeaf': true},
-                      { 'key' : 'I9','parent' : '1', 'name' : 'Controller1','color':'#18499e','text': "Controller1", 'isTreeLeaf': true},
-                      { 'key' : 'I10','parent' :'1', 'name' : 'Device2','color':'#18499e','text': "Device2", 'isTreeLeaf': true}                 
+                      { 'key' : 'I4','parent' : '2', 'name' : 'one','type':'PID','color':'lightblue','text': "Alpha",'isTreeLeaf': true},
+                      { 'key' : 'I5','parent' : '2', 'name' : 'two','type':'PID', 'color':'orange','text': "Beta",'isTreeLeaf': true},
+                      { 'key' : 'I6','parent' : '2', 'name' : 'three','type':'PID','color':'lightgreen','text': "Gamma", 'isTreeLeaf': true},
+                      { 'key' : 'I7','parent' : '2', 'name' : 'four','type':'PID','color':'pink','text': "Delta", 'isTreeLeaf': true},
+                      { 'key' : 'I8','parent' : '2', 'name' : 'five','type':'PID','color':'yellow','text': "Epsilon", 'isTreeLeaf': true},
+                      { 'key' : 'I9','parent' : '2', 'name' : 'Controller1','type':'PID','color':'#18499e','text': "Controller1", 'isTreeLeaf': true},
+                      { 'key' : 'I10','parent' : '2', 'name' : 'Device2','type':'PID','color':'#18499e','text': "Device2", 'isTreeLeaf': true},
+                      { 'key' : '2' , 'parent' : '','name' : 'Test1','type':'PID','color':'yellow','text': "", 'isTreeLeaf': false},
+                      { 'key' : '1' , 'parent' : '','name' : 'Test2','type':'PID','color':'yellow','text': "", 'isTreeLeaf': false},
+                      { 'key' : 'I8','parent' : '1', 'name' : 'five','type':'PID','color':'yellow','text': "Epsilon", 'isTreeLeaf': true},
+                      { 'key' : 'I9','parent' : '1', 'name' : 'Controller1','type':'PID','color':'#18499e','text': "Controller1", 'isTreeLeaf': true},
+                      { 'key' : 'I10','parent' :'1', 'name' : 'Device2','type':'PID','color':'#18499e','text': "Device2", 'isTreeLeaf': true}                 
                     )
   
                     this.treePalette.model = new go.TreeModel(paletteList);
-                    console.log(this.treePalette.model.nodeDataArray);
+                    
+
+                    
     }
 
     imageConverter(prop, picture) {

@@ -17,8 +17,16 @@ export class EditorComponent implements OnInit{
   title = 'FBD Pilot';
   message:any;
   dataMethod
-  model = new go.GraphLinksModel(
-    );
+  model = go.Model.fromJson({ "class": "go.GraphLinksModel()",
+  "nodeCategoryProperty": "type",
+  "linkFromPortIdProperty": "frompid",
+  "linkToPortIdProperty": "topid",
+  "nodeDataArray": [
+
+  ],
+  "linkDataArray": [
+  ]
+});
 
   @ViewChild('text')
   private textField: ElementRef;
