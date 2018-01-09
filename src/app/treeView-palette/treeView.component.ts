@@ -16,27 +16,51 @@ export class TreeViewComponent implements OnInit{
     private treePaletteRef: ElementRef;
 
     inputArray = [
-      { key:2,
-        category:"Device1",
-        Name:"Controller1",
-        Type:"PID",
+      { category:"Device1",
+        Name:"Controller",
+        Type:"controller",
+        text:"Controller1",
         Description:"Device1 Desc",
-        parent:1,
         Iports:["PV","SV","PB","Ti","Td"],
         Oports:["MV"],
         color: "#18499e"
       },
-      { key:1,
-        category:"Device2",
+      { category:"Device2",
         Name:"Device2",
-        Type:"Type2",
+        text:"Device2",
+        Type:"deivce",
         Description:"Device2 Desc",
         Iports:["A1","A2"],
         Oports:["B1"],
         color: "#18499e"
+      },
+      { category:"variable1",
+        Name:"variable1",
+        text:"variable1",
+        Type:"variable1",
+        Description:"variable1 Desc",
+        Iports:[],
+        Oports:[],
+        color: "#18499e"
+      },
+      { category:"variable2",
+        Name:"variable2",
+        text:"variable2",
+        Type:"variable2",
+        Description:"variable2 Desc",
+        Iports:[],
+        Oports:[],
+        color: "#18499e"
       }];
+      paletteList:any;
     
-    constructor(){}
+      constructor(){
+      this.paletteList = new Array(
+        { 'key' : '1' , 'parent' : '','name' : 'PID Controllers','type':'controller','color':'yellow','text': "", 'isTreeLeaf': false},
+        { 'key' : '2' , 'parent' : '','name' : 'Gate Controllers','type':'deivce','color':'yellow','text': "", 'isTreeLeaf': false},
+        { 'key' : '3' , 'parent' : '','name' : 'Variable','type':'variable1','color':'yellow','text': "", 'isTreeLeaf': false}
+      )
+    }
   
     ngOnInit() {
       this.treePalette.div = this.treePaletteRef.nativeElement;
@@ -99,14 +123,38 @@ export class TreeViewComponent implements OnInit{
                     ); // end Node
 
                     
-                    var paletteList = new Array(
-                      { 'key' : 'I1','parent' : '2', 'name' : 'Device2','type':'PID','color':'#18499e','text': "Device2", 'isTreeLeaf': true},
-                      { 'key' : '2' , 'parent' : '','name' : 'PID Controllers','type':'PID','color':'yellow','text': "", 'isTreeLeaf': false},
-                      { 'key' : '1' , 'parent' : '','name' : 'Gate Controllers','type':'PID','color':'yellow','text': "", 'isTreeLeaf': false},
-                      { 'key' : 'I2','parent' : '1', 'name' : 'five','type':'Type2','color':'yellow','text': "Epsilon", 'isTreeLeaf': true},
-                    )
+                    for(var a=0;a<this.inputArray.length;a++){
+                      var obj = {};
+                        if(this.inputArray[a].Type.includes("variable")){
+                          obj["parent"] = "3";
+                          obj["name"] = this.inputArray[a].Name;
+                          obj["type"] = this.inputArray[a].Type;
+                          obj["color"] = this.inputArray[a].color;
+                          obj["text"] = this.inputArray[a].Name;
+                          obj["isTreeLeaf"] = true;
+                          this.paletteList.push(obj);
+                        }
+                        if(this.inputArray[a].Type.includes("controller")){
+                          obj["parent"] = "1";
+                          obj["name"] = this.inputArray[a].Name;
+                          obj["type"] = this.inputArray[a].Type;
+                          obj["color"] = this.inputArray[a].color;
+                          obj["text"] = this.inputArray[a].Name;
+                          obj["isTreeLeaf"] = true;
+                          this.paletteList.push(obj);
+                        }
+                        if(this.inputArray[a].Type.includes("deivce")){
+                          obj["parent"] = "2";
+                          obj["name"] = this.inputArray[a].Name;
+                          obj["type"] = this.inputArray[a].Type;
+                          obj["color"] = this.inputArray[a].color;
+                          obj["text"] = this.inputArray[a].Name;
+                          obj["isTreeLeaf"] = true;
+                          this.paletteList.push(obj);
+                        }
+                    }
   
-                    this.treePalette.model = new go.TreeModel(paletteList);
+                    this.treePalette.model = new go.TreeModel(this.paletteList);
                     
 
                     

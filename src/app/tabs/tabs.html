@@ -1,9 +1,7 @@
 <ngb-tabset>
-        <ngb-tab title="Palette">
+        <ngb-tab title="TreeView">
           <ng-template ngbTabContent>
-              <app-form-editor
-                [map1]='paletteMap'>
-              </app-form-editor>
+            <tree-view></tree-view>
           </ng-template>
         </ngb-tab>
         <ngb-tab title="Properties">
@@ -13,12 +11,10 @@
               <div><label>Color: </label><input [(ngModel)]="data.color" name="color"></div>
               <div><label>Location: </label>{{node.location.x.toFixed(2)}}, {{node.location.y.toFixed(2)}}</div>
               <div><label># Links: </label>{{node.linksConnected.count}}</div>
+              <button (click)="onCommitDetails()">Commit Details</button>
+              <button (click)="onCancelChanges()">Cancel Changes</button>
             </ng-template>
           </ngb-tab>
-        <ngb-tab title="TreeView">
-          <ng-template ngbTabContent>
-            <tree-view></tree-view>
-          </ng-template>
-        </ngb-tab>
-      </ngb-tabset>
+        
+</ngb-tabset>
       

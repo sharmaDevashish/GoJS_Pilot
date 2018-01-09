@@ -9,7 +9,7 @@ import { ExampleService } from '../app-service/app.component.service';
 })
 export class Tabs implements OnInit  {
 
-  @Input() data: Array<any>;
+  @Input() data: any;
   @Input() node:go.Node;
   nodeData:any;
   message:string;
@@ -41,6 +41,19 @@ export class Tabs implements OnInit  {
       this.data = null;
     }
     this._exampleService.choosenNode(this.node);
+  }
+
+  onCommitDetails() {
+    console.log("in");
+    if (this.node) {
+      const model = this.node.diagram.model;
+      // copy the edited properties back into the node's model data,
+      // all within a transaction
+      model.startTransaction();
+      model.setDataProperty(this.node.data, "name", this.data.text);
+      model.setDataProperty(this.node.data, "color", this.data.color);
+      model.commitTransaction("modified properties");
+    }
   }
 
   

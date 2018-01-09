@@ -35,9 +35,9 @@ export class DiagramEditorComponent implements OnInit {
 
   inputArray = [
     { category:"Device1",
-      Name:"Controller1",
+      Name:"Controller",
       Type:"controller",
-      text:"PID",
+      text:"Controller1",
       Description:"Device1 Desc",
       Iports:["PV","SV","PB","Ti","Td"],
       Oports:["MV"],
@@ -129,7 +129,8 @@ export class DiagramEditorComponent implements OnInit {
                 var oport=this.makePort(templateItem.Oports[j],false);
                 _makeportsoutput.push(oport);
                 }
-                this.makeTemplate(this.inputArray[i].Type,
+                this.makeNode(this.inputArray[i].text,
+                    this.inputArray[i].Type,
                     this.inputArray[i].Name,
                     this.inputArray[i].color,
                     _makeportsinput,
@@ -311,7 +312,9 @@ export class DiagramEditorComponent implements OnInit {
       )
     );
     if(this.flag == true){
-      this.diagram.add(node);
+      this.diagram.startTransaction("addNodeOnClick");
+      this.diagram.model.addNodeData(node);
+      this.diagram.commitTransaction("addNodeOnClick")
     }else{
       this.diagram.nodeTemplateMap.add(typename, node);
     }
@@ -366,40 +369,14 @@ export class DiagramEditorComponent implements OnInit {
             outports)
         );
         if(this.flag == true){
-            this.diagram.add(node);
+          this.diagram.startTransaction("addNodeOnClick");
+          this.diagram.model.addNodeData(node);
+          this.diagram.commitTransaction("addNodeOnClick")
         }else{
             this.diagram.nodeTemplateMap.add(typename, node);
         }
-    }}else if(typename == "comment"){
-    var node = ggm(go.Node, "Auto",{padding:0},
-                 {selectionAdorned: true,location:new go.Point(x,y)},
-
-                 ggm(go.Shape, "RoundedRectangle",
-                 {
-                   fill: background, stroke: null, strokeWidth: 0,
-                   spot1: go.Spot.TopLeft, spot2: go.Spot.BottomRight,
-                   name: "SHAPE"
-                 }),
-
-                ggm(go.Panel, "Table",//{align:go.Spot.Center},
-                ggm(go.TextBlock,name,
-                {
-                  text:name,
-                  editable: true,
-                  textAlign: "center",
-                 wrap: go.TextBlock.WrapDesiredSize,
-                  stroke: "#000",
-                  font: "bold 14px Noto Sans"
-                },
-             new go.Binding("text", name).makeTwoWay())
-            )
-       );
-     if(this.flag == true){
-        this.diagram.add(node);
-     }else{
-        this.diagram.nodeTemplateMap.add(typename, node);
-     }
-  }
+      }
+    }
   }
 
   makeVariable(typename,name, background) {
@@ -432,7 +409,9 @@ export class DiagramEditorComponent implements OnInit {
        )
      );
      if(this.flag == true){
-        this.diagram.add(node);
+      this.diagram.startTransaction("addNodeOnClick");
+      this.diagram.model.addNodeData(node);
+      this.diagram.commitTransaction("addNodeOnClick")
       }else{
         this.diagram.nodeTemplateMap.add(typename, node);
       }
@@ -450,6 +429,15 @@ export class DiagramEditorComponent implements OnInit {
     shape.fill = "#18499e";
     shape.stroke = null;
   };
+
+  makeNode(text,Type,Name,color,_makeportsinput,_makeportsoutput,x,y){
+    this.diagram.startTransaction("add node");
+    this.diagram.model.addNodeData({
+      text: text,
+      location: new go.Point(x,y) 
+    });
+    this.diagram.commitTransaction("add node");
+  }
 
   showGrid(){
     const ggm = go.GraphObject.make;
