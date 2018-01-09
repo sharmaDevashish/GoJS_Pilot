@@ -67,22 +67,22 @@ export class TreeViewComponent implements OnInit{
                     { selectionAdorned: false,
                        click: (e, node) => {
                         var cmd = this.treePalette.commandHandler;
-                        if (node.isTreeExpanded) {
-                          cmd.collapseTree(node);
-                        }else{
-                          cmd.expandTree(node);
+                          if (node.isTreeExpanded) {
+                            cmd.collapseTree(node);
+                          }else{
+                            cmd.expandTree(node);
                         }
                     }}, 
                     new go.Binding("copyable", "isTreeLeaf"),
-                    $("TreeExpanderButton",
-                    {
-                    width: 14,
-                    "ButtonIcon.stroke": "blue",
-                    "ButtonBorder.fill": "yellow"
-                    }),
+                      $("TreeExpanderButton",
+                      {
+                        width: 14,
+                        "ButtonIcon.stroke": "blue",
+                        "ButtonBorder.fill": "lightblue"
+                      }),
                     $(go.Panel, "Horizontal",
-                    { position: new go.Point(16, 0) },
-                    new go.Binding("background", "isSelected", function (s) { return (s ? "lightblue" : "white"); }),
+                      { position: new go.Point(16, 0) },
+                        new go.Binding("background", "isSelected", function (s) { return (s ? "lightblue" : "white"); }),
                     $(go.Picture,
                       {
                         width: 18, height: 18,
@@ -93,28 +93,17 @@ export class TreeViewComponent implements OnInit{
                       // to display open folder, closed folder, or document
                       new go.Binding("source", "isTreeExpanded", this.imageConverter).ofObject(),
                       new go.Binding("source", "isTreeLeaf", this.imageConverter).ofObject()),
-                    $(go.TextBlock,
-                    new go.Binding("text", "name"))
-                    ) // end Horizontal Panel
+                    $(go.TextBlock,{font:" 15px Georgia, Serif"},
+                        new go.Binding("text", "name"))
+                      ) // end Horizontal Panel
                     ); // end Node
 
                     
-  
-                   
-
                     var paletteList = new Array(
-                      { 'key' : 'I4','parent' : '2', 'name' : 'one','type':'PID','color':'lightblue','text': "Alpha",'isTreeLeaf': true},
-                      { 'key' : 'I5','parent' : '2', 'name' : 'two','type':'PID', 'color':'orange','text': "Beta",'isTreeLeaf': true},
-                      { 'key' : 'I6','parent' : '2', 'name' : 'three','type':'PID','color':'lightgreen','text': "Gamma", 'isTreeLeaf': true},
-                      { 'key' : 'I7','parent' : '2', 'name' : 'four','type':'PID','color':'pink','text': "Delta", 'isTreeLeaf': true},
-                      { 'key' : 'I8','parent' : '2', 'name' : 'five','type':'PID','color':'yellow','text': "Epsilon", 'isTreeLeaf': true},
-                      { 'key' : 'I9','parent' : '2', 'name' : 'Controller1','type':'PID','color':'#18499e','text': "Controller1", 'isTreeLeaf': true},
-                      { 'key' : 'I10','parent' : '2', 'name' : 'Device2','type':'PID','color':'#18499e','text': "Device2", 'isTreeLeaf': true},
-                      { 'key' : '2' , 'parent' : '','name' : 'Test1','type':'PID','color':'yellow','text': "", 'isTreeLeaf': false},
-                      { 'key' : '1' , 'parent' : '','name' : 'Test2','type':'PID','color':'yellow','text': "", 'isTreeLeaf': false},
-                      { 'key' : 'I8','parent' : '1', 'name' : 'five','type':'PID','color':'yellow','text': "Epsilon", 'isTreeLeaf': true},
-                      { 'key' : 'I9','parent' : '1', 'name' : 'Controller1','type':'PID','color':'#18499e','text': "Controller1", 'isTreeLeaf': true},
-                      { 'key' : 'I10','parent' :'1', 'name' : 'Device2','type':'PID','color':'#18499e','text': "Device2", 'isTreeLeaf': true}                 
+                      { 'key' : 'I1','parent' : '2', 'name' : 'Device2','type':'PID','color':'#18499e','text': "Device2", 'isTreeLeaf': true},
+                      { 'key' : '2' , 'parent' : '','name' : 'PID Controllers','type':'PID','color':'yellow','text': "", 'isTreeLeaf': false},
+                      { 'key' : '1' , 'parent' : '','name' : 'Gate Controllers','type':'PID','color':'yellow','text': "", 'isTreeLeaf': false},
+                      { 'key' : 'I2','parent' : '1', 'name' : 'five','type':'Type2','color':'yellow','text': "Epsilon", 'isTreeLeaf': true},
                     )
   
                     this.treePalette.model = new go.TreeModel(paletteList);

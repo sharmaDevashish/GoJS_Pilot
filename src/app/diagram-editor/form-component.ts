@@ -11,20 +11,11 @@ export class AppFormEditor implements OnInit,OnChanges {
 
   @Input() map1:any;
 
-  /*inputArray = [
-    { text: "Alpha", color: "lightblue" },
-    { text: "Beta", color: "orange" },
-    { text: "Gamma", color: "lightgreen" },
-    { text: "Delta", color: "pink" },
-    { text: "Epsilon", color: "yellow" },
-    { text: "Controller1", color:"#18499e"},
-    { text: "Device2", color:"#18499e"}
-  ];*/
-
   inputArray = [
     { category:"Device1",
       Name:"Controller1",
-      Type:"PID",
+      Type:"controller",
+      text:"PID",
       Description:"Device1 Desc",
       Iports:["PV","SV","PB","Ti","Td"],
       Oports:["MV"],
@@ -32,13 +23,31 @@ export class AppFormEditor implements OnInit,OnChanges {
     },
     { category:"Device2",
       Name:"Device2",
-      Type:"Type2",
+      text:"Device2",
+      Type:"deivce",
       Description:"Device2 Desc",
       Iports:["A1","A2"],
       Oports:["B1"],
       color: "#18499e"
-    }]
-
+    },
+    { category:"variable1",
+      Name:"variable1",
+      text:"variable1",
+      Type:"variable1",
+      Description:"variable1 Desc",
+      Iports:[],
+      Oports:[],
+      color: "#18499e"
+    },
+    { category:"variable2",
+      Name:"variable2",
+      text:"variable2",
+      Type:"variable2",
+      Description:"variable2 Desc",
+      Iports:[],
+      Oports:[],
+      color: "#18499e"
+    }];
   private palette1: go.Palette = new go.Palette();
 
   @ViewChild('paletteDiv1')
@@ -73,22 +82,7 @@ export class AppFormEditor implements OnInit,OnChanges {
           new go.Binding("text", "name").makeTwoWay())
       ); 
 
-      /*this.palette1.nodeTemplate =
-                  ggm(go.Node, "Vertical",
-                    {locationObjectName: "TB"},
-                      ggm(go.Panel, "Table",
-                      {width: 220, height: 30},
-                          ggm(go.RowColumnDefinition,
-                              { column: 0, alignment: go.Spot.Left}),
-                          ggm(go.RowColumnDefinition,
-                              { column: 2, alignment: go.Spot.Right }),
-                    ggm(go.Shape,{fill: "#F7F7F7",stroke:"#F7F7F7",width: 220, height: 50}),
-                    ggm(go.TextBlock, { name: "TB1",font: "12px Noto Sans,Regular",alignment: go.Spot.Center},
-                    new go.Binding("text", "name")),
-                    )
-                  );  */
-
-    var _tempnodeDataArray = [];
+      var _tempnodeDataArray = [];
                   for(var i=0;i<this.inputArray.length;i++){
                       _tempnodeDataArray[i] = {
                         "type":(this.inputArray[i].Type),
