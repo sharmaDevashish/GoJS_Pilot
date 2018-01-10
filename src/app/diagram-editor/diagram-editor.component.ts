@@ -1,13 +1,15 @@
 import { Component, OnInit, ViewChild, ElementRef, Input, Output, EventEmitter } from '@angular/core';
 import { Router, NavigationExtras } from "@angular/router";
 import * as go from 'gojs';
+import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
+import { Group } from 'gojs';
 
 @Component({
   selector: 'app-diagram-editor',
   templateUrl: './diagram-editor.component.html',
   styleUrls: ['./diagram-editor.component.css']
 })
-export class DiagramEditorComponent implements OnInit {
+export class DiagramEditorComponent implements OnInit, AfterViewInit {
   private diagram: go.Diagram = new go.Diagram();
   private palette: go.Palette = new go.Palette();
 
@@ -15,7 +17,7 @@ export class DiagramEditorComponent implements OnInit {
   DiaModel:any;
   selectedNode:any;
   flag:boolean;
-
+  
   @ViewChild('diagramDiv')
   private diagramRef: ElementRef;
 
@@ -38,6 +40,7 @@ export class DiagramEditorComponent implements OnInit {
       Name:"Controller",
       Type:"controller",
       text:"Controller1",
+      group:"",
       Description:"Device1 Desc",
       Iports:["PV","SV","PB","Ti","Td"],
       Oports:["MV"],
@@ -47,6 +50,7 @@ export class DiagramEditorComponent implements OnInit {
       Name:"Device2",
       text:"Device2",
       Type:"deivce",
+      group:"",
       Description:"Device2 Desc",
       Iports:["A1","A2"],
       Oports:["B1"],
@@ -56,6 +60,7 @@ export class DiagramEditorComponent implements OnInit {
       Name:"variable1",
       text:"variable1",
       Type:"variable1",
+      group:"",
       Description:"variable1 Desc",
       Iports:[],
       Oports:[],
@@ -65,6 +70,7 @@ export class DiagramEditorComponent implements OnInit {
       Name:"variable2",
       text:"variable2",
       Type:"variable2",
+      group:"",
       Description:"variable2 Desc",
       Iports:[],
       Oports:[],
@@ -75,11 +81,14 @@ export class DiagramEditorComponent implements OnInit {
       Name:"comment",
       text:"comment",
       Type:"comment",
+      group:"",
       Description:"comment Desc",
       Iports:[],
       Oports:[],
       color: "#FFFF00"
     }];
+
+    
 
   drawDiagramEditor(){
 
@@ -129,7 +138,7 @@ export class DiagramEditorComponent implements OnInit {
                 var oport=this.makePort(templateItem.Oports[j],false);
                 _makeportsoutput.push(oport);
                 }
-                this.makeNode(this.inputArray[i].text,
+                this.makeTemplate(//this.inputArray[i].text,
                     this.inputArray[i].Type,
                     this.inputArray[i].Name,
                     this.inputArray[i].color,
@@ -278,18 +287,13 @@ export class DiagramEditorComponent implements OnInit {
     return panel;
   }
 
-  showPort(){
-    if(this.nodeSelected)
-    console.log(this.nodeSelected)
-  }
-
   public makeTemplate(typename,name, background, inports, outports,x,y) {
     const ggm = go.GraphObject.make; 
  
     if(!typename.includes("variable")){
       if(typename.includes("comment")){
         var node = ggm(go.Node, "Auto",{padding:0},
-        {selectionAdorned: true,location:new go.Point(x,y)},
+        {selectionAdorned: true,location:new go.Point(x,y),copyable:false},
 
         ggm(go.Shape, "RoundedRectangle",
         {
@@ -322,9 +326,9 @@ export class DiagramEditorComponent implements OnInit {
         var a=inports.length;
         var node = ggm(go.Node, "Auto",{padding:0},
                     {selectionAdorned: true,location:new go.Point(x,y)},
-                    //new go.Binding("location",loc),
+                    new go.Binding("location", "loc",go.Point.parse).makeTwoWay(go.Point.stringify),
           ggm(go.Panel, "Auto",
-            {width: 120,height:17*a,minSize:new go.Size(120,80),mouseEnter: this.mouseEnter,mouseLeave: this.mouseLeave},
+            {width: 120,height:17*a,minSize:new go.Size(120,80)},//mouseEnter: this.mouseEnter,mouseLeave: this.mouseLeave},
             ggm(go.Shape, "RoundedRectangle",
               {
                 fill: background, stroke: null, strokeWidth: 0,
@@ -382,7 +386,7 @@ export class DiagramEditorComponent implements OnInit {
   makeVariable(typename,name, background) {
     const ggm = go.GraphObject.make; 
     var node = ggm(go.Node, "Spot",
-                 {selectionAdorned: false},
+                 {selectionAdorned: true},
                  new go.Binding("location", "loc",go.Point.parse).makeTwoWay(go.Point.stringify),
        ggm(go.Panel, "Auto",
          { width: 120},
@@ -417,7 +421,7 @@ export class DiagramEditorComponent implements OnInit {
       }
     }
 
- mouseEnter(e,obj){
+ /*mouseEnter(e,obj){
   var shape = obj.findObject("SHAPE");
   shape.fill = "#6DAB80";
   shape.stroke = "#A6E6A1";
@@ -428,15 +432,43 @@ export class DiagramEditorComponent implements OnInit {
     // Return the Shape's fill and stroke to the defaults
     shape.fill = "#18499e";
     shape.stroke = null;
-  };
+  };*/
 
-  makeNode(text,Type,Name,color,_makeportsinput,_makeportsoutput,x,y){
+  /*makeNode(text,Type,Name,color,_makeportsinput,_makeportsoutput,x,y){
     this.diagram.startTransaction("add node");
     this.diagram.model.addNodeData({
       text: text,
       location: new go.Point(x,y) 
     });
     this.diagram.commitTransaction("add node");
+  }*/
+
+  addToGrp1(){
+    console.log(this.diagram.selection.toArray());
+    var selNodes = this.diagram.selection.toArray();
+    /*this.diagram.startTransaction("make new group");
+    this.diagram.model.addNodeData({ key: "Omega", isGroup: true });
+    this.diagram.commitTransaction("make new group");*/
+    
+    for(var a=0;a<selNodes.length;a++){
+      this.diagram.startTransaction("add new member");
+      this.diagram.selection.each(ele => {
+        ele.Zd.group = "grp1";
+      });
+      this.diagram.commitTransaction("add new member");
+    }
+  }
+
+  addToGrp2(){
+    console.log(this.diagram.selection.toArray());
+    var selNodes = this.diagram.selection.toArray();
+    for(var a=0;a<selNodes.length;a++){
+      this.diagram.startTransaction("add new member");
+      this.diagram.selection.each(ele => {
+        ele.Zd.group = "grp2";
+      });
+      this.diagram.commitTransaction("add new member");
+    }
   }
 
   showGrid(){
@@ -458,6 +490,21 @@ export class DiagramEditorComponent implements OnInit {
         )
     }
   }
+}
+
+save(){
+  console.log(this.diagram.model);
+  var diaModel = this.diagram.model;
+  var diaModelStr = JSON.stringify(diaModel);
+  sessionStorage.setItem("model" ,diaModelStr);
+}
+
+zoomIn(){
+  this.diagram.commandHandler.increaseZoom();
+}
+
+zoomOut(){
+  this.diagram.commandHandler.decreaseZoom();
 }
 
 printImage(){
@@ -494,7 +541,6 @@ printImage(){
 }
 
   constructor(private router: Router) {
-    
     this.drawDiagramEditor();
 }
 
@@ -502,5 +548,15 @@ printImage(){
     this.diagram.div = this.diagramRef.nativeElement;
     this.palette.div = this.paletteRef.nativeElement;
     
+  }
+
+  ngAfterViewInit(){
+    if(sessionStorage.getItem("model")){
+      var diaModel = sessionStorage.getItem("model");
+      diaModel = JSON.parse(diaModel);
+      console.log(diaModel);
+      this.model = go.Model.fromJson(diaModel);
+      console.log(this.model);
+    }
   }
 }

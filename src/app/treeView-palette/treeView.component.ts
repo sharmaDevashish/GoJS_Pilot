@@ -20,6 +20,7 @@ export class TreeViewComponent implements OnInit{
         Name:"Controller",
         Type:"controller",
         text:"Controller1",
+        group:"",
         Description:"Device1 Desc",
         Iports:["PV","SV","PB","Ti","Td"],
         Oports:["MV"],
@@ -29,6 +30,7 @@ export class TreeViewComponent implements OnInit{
         Name:"Device2",
         text:"Device2",
         Type:"deivce",
+        group:"",
         Description:"Device2 Desc",
         Iports:["A1","A2"],
         Oports:["B1"],
@@ -38,6 +40,7 @@ export class TreeViewComponent implements OnInit{
         Name:"variable1",
         text:"variable1",
         Type:"variable1",
+        group:"",
         Description:"variable1 Desc",
         Iports:[],
         Oports:[],
@@ -47,6 +50,7 @@ export class TreeViewComponent implements OnInit{
         Name:"variable2",
         text:"variable2",
         Type:"variable2",
+        group:"",
         Description:"variable2 Desc",
         Iports:[],
         Oports:[],
@@ -131,6 +135,7 @@ export class TreeViewComponent implements OnInit{
                           obj["type"] = this.inputArray[a].Type;
                           obj["color"] = this.inputArray[a].color;
                           obj["text"] = this.inputArray[a].Name;
+                          obj["group"] ="";
                           obj["isTreeLeaf"] = true;
                           this.paletteList.push(obj);
                         }
@@ -140,6 +145,7 @@ export class TreeViewComponent implements OnInit{
                           obj["type"] = this.inputArray[a].Type;
                           obj["color"] = this.inputArray[a].color;
                           obj["text"] = this.inputArray[a].Name;
+                          obj["group"] ="";
                           obj["isTreeLeaf"] = true;
                           this.paletteList.push(obj);
                         }
@@ -149,6 +155,7 @@ export class TreeViewComponent implements OnInit{
                           obj["type"] = this.inputArray[a].Type;
                           obj["color"] = this.inputArray[a].color;
                           obj["text"] = this.inputArray[a].Name;
+                          obj["group"] ="";
                           obj["isTreeLeaf"] = true;
                           this.paletteList.push(obj);
                         }

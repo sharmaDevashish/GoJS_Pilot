@@ -2,10 +2,19 @@
     <div #palette id="palette" class="paletteDiv1"></div>
     <div #diagramDiv class="diagramDiv"></div>
   </div>
-  <div>
-    <button (click)="showGrid()" class="btn" style="margin:10px">Show Grid</button>
-    <button (click)= "printImage()" class="btn" style="margin:10px">Print Preview</button>
-    <button (click)= "makeNode()" class="btn" style="margin:10px">Make Node</button>
+  <div class ="col-xs-12">
+    <div class ="col-xs-6" style="float:left">
+      <button (click)= "printImage()" class="btn" style="margin:10px">Print Preview</button>
+      <!--<button (click)= "makeNode()" class="btn" style="margin:10px">Make Node</button>-->
+      <button (click)= "save()" class="btn" style="margin:10px">Save</button>
+      <button (click)= "addToGrp1()" class="btn" style="margin:10px">Add to Grp1</button>
+      <button (click)= "addToGrp2()" class="btn" style="margin:10px">Add to Grp2</button>
+    </div>
+    <div class style="float:right">
+      <button (click)="zoomIn()" class="btn" style="margin:10px">Zoom In</button>
+      <button (click)= "zoomOut()" class="btn" style="margin:10px">Zoom Out</button>
+    </div>
+    
  </div>
 
  

@@ -29,24 +29,6 @@ export class AppFormEditor implements OnInit,OnChanges {
       Iports:["A1","A2"],
       Oports:["B1"],
       color: "#18499e"
-    },
-    { category:"variable1",
-      Name:"variable1",
-      text:"variable1",
-      Type:"variable1",
-      Description:"variable1 Desc",
-      Iports:[],
-      Oports:[],
-      color: "#18499e"
-    },
-    { category:"variable2",
-      Name:"variable2",
-      text:"variable2",
-      Type:"variable2",
-      Description:"variable2 Desc",
-      Iports:[],
-      Oports:[],
-      color: "#18499e"
     }];
   private palette1: go.Palette = new go.Palette();
 
