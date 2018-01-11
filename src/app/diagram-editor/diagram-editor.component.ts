@@ -3,6 +3,9 @@ import { Router, NavigationExtras } from "@angular/router";
 import * as go from 'gojs';
 import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
 import { Group } from 'gojs';
+//import { RealtimeDragSelectingTool } from "gojs";
+
+
 
 @Component({
   selector: 'app-diagram-editor',
@@ -37,7 +40,7 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
 
   inputArray = [
     { category:"Device1",
-      Name:"Controller",
+      Name:"ControllerYOYO",
       Type:"controller",
       text:"Controller1",
       group:"",
@@ -52,8 +55,8 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
       Type:"deivce",
       group:"",
       Description:"Device2 Desc",
-      Iports:["A1","A2"],
-      Oports:["B1"],
+      Iports:["I1","I2"],
+      Oports:["O1"],
       color: "#18499e"
     },
     { category:"variable1",
@@ -95,8 +98,10 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
     const ggm = go.GraphObject.make;
     this.diagram = new go.Diagram();
     this.diagram.initialContentAlignment = go.Spot.Center;
+    //this.diagram.toolManager.dragSelectingTool = new go.RealtimeDragSelectingTool();
     this.diagram.allowDrop = true;  // necessary for dragging from Palette
     this.diagram.undoManager.isEnabled = true;
+    
     this.diagram.addDiagramListener("ChangedSelection",
         e => {
           const node = e.diagram.selection.first();
@@ -140,7 +145,7 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
                 }
                 this.makeTemplate(//this.inputArray[i].text,
                     this.inputArray[i].Type,
-                    this.inputArray[i].Name,
+                    this.inputArray[i].text,
                     this.inputArray[i].color,
                     _makeportsinput,
                     _makeportsoutput,
@@ -190,7 +195,7 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
           _makeportsoutput.push(oport);
           }
           this.makeTemplate(this.inputArray[it].Type,
-               this.inputArray[it].Name,
+               this.inputArray[it].text,
                this.inputArray[it].color,
                _makeportsinput,
                _makeportsoutput,
@@ -287,7 +292,7 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
     return panel;
   }
 
-  public makeTemplate(typename,name, background, inports, outports,x,y) {
+  public makeTemplate(typename,text, background, inports, outports,x,y) {
     const ggm = go.GraphObject.make; 
  
     if(!typename.includes("variable")){
@@ -303,16 +308,16 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
         }),
 
           ggm(go.Panel, "Table",//{align:go.Spot.Center},
-          ggm(go.TextBlock,name,
+          ggm(go.TextBlock,text,
           {
-            text:name,
+            text:text,
             editable: true,
             textAlign: "center",
             wrap: go.TextBlock.WrapDesiredSize,
             stroke: "#000",
             font: "bold 14px Noto Sans"
           },
-        new go.Binding("text", name).makeTwoWay())
+        new go.Binding("text", "text").makeTwoWay())
       )
     );
     if(this.flag == true){
@@ -346,11 +351,10 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
                   maxSize: new go.Size(80, NaN),
                   stroke: "#fff",
                   font: "12px Noto Sans,Regular"
-                },
-                new go.Binding("text", typename).makeTwoWay()),
-              ggm(go.TextBlock,name,
+                }),
+              ggm(go.TextBlock,
                 {
-                  text:name,
+                  text:text,
                   row: 1,
                   margin:  3,
                   editable: true,
@@ -358,7 +362,7 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
                   stroke: "#fff",
                   font: "bold 14px Noto Sans"
                 },
-                new go.Binding("text", name).makeTwoWay())
+                new go.Binding("text", "text").makeTwoWay())
             )
           ),
           ggm(go.Panel, "Vertical",
@@ -453,7 +457,7 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
     for(var a=0;a<selNodes.length;a++){
       this.diagram.startTransaction("add new member");
       this.diagram.selection.each(ele => {
-        ele.Zd.group = "grp1";
+        ele["Zd"]["group"] = "grp1";
       });
       this.diagram.commitTransaction("add new member");
     }
@@ -465,7 +469,7 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
     for(var a=0;a<selNodes.length;a++){
       this.diagram.startTransaction("add new member");
       this.diagram.selection.each(ele => {
-        ele.Zd.group = "grp2";
+        ele["Zd"]["group"] = "grp2";
       });
       this.diagram.commitTransaction("add new member");
     }
@@ -497,6 +501,72 @@ save(){
   var diaModel = this.diagram.model;
   var diaModelStr = JSON.stringify(diaModel);
   sessionStorage.setItem("model" ,diaModelStr);
+}
+
+saveFiles(){
+  var model1=new Object();
+  model1["Device"] = "grp1";
+  model1["nodeDataArray"] = [];
+  model1["linkDataArray"] = [];
+  var model2=new Object();
+  model2["Device"] = "grp2";
+  model2["nodeDataArray"] = [];
+  model2["linkDataArray"] = [];
+  var myModel = [];
+  var myLinks = [];
+  myModel = this.diagram.model.nodeDataArray;
+  myLinks = this.diagram.model.linkDataArray;
+  
+  for(var i=0;i<myModel.length;i++){
+    if(myModel[i].group == "grp1"){
+      var nodeData = new Object();
+      nodeData["name"] = myModel[i].name;
+      nodeData["group"] = myModel[i].group;
+      model1["nodeDataArray"].push(nodeData);
+    }
+    else{
+      var nodeData = new Object();
+      nodeData["name"] = myModel[i].name;
+      nodeData["group"] = myModel[i].group;
+      model2["nodeDataArray"].push(nodeData);
+    }
+  }
+  for(var i=0;i<myLinks.length;i++){
+    var linkData = new Object();
+    if(myLinks[i].group == "grp1"){
+      for(var it=0;it<myModel.length;it++){
+        if(myModel[it].key == myLinks[i].from){
+          linkData["from"] = myModel[it].Device2;
+        }
+      }
+      linkData["grpFrom"] = "grp1";
+      linkData["fromPID"] = myLinks[i].frompid;
+      linkData["toPID"] = myLinks[i].topid;
+      for(var it=0;it<myModel.length;it++){
+        if(myModel[it].key == myLinks[i].to){
+          linkData["to"] = myModel[it].Device2;
+        }
+      }
+      model2["linkDataArray"].push(linkData);
+    }else{
+      for(var it=0;it<myModel.length;it++){
+        if(myModel[it].key == myLinks[i].from){
+          linkData["from"] = myModel[it].Device2;
+        }
+      }
+      linkData["grpFrom"] = "grp2";
+      linkData["fromPID"] = myLinks[i].frompid;
+      linkData["toPID"] = myLinks[i].topid;
+      for(var it=0;it<myModel.length;it++){
+        if(myModel[it].key == myLinks[i].to){
+          linkData["to"] = myModel[it].Device2;
+        }
+      }
+      model1["linkDataArray"].push(linkData);
+    }
+  }
+  console.log(JSON.stringify(model1));
+  console.log(JSON.stringify(model2));
 }
 
 zoomIn(){

@@ -50,7 +50,7 @@ export class Tabs implements OnInit  {
       // copy the edited properties back into the node's model data,
       // all within a transaction
       model.startTransaction();
-      model.setDataProperty(this.node.data, "name", this.data.text);
+      model.setDataProperty(this.node.data, "text", this.data.text);
       model.setDataProperty(this.node.data, "color", this.data.color);
       model.commitTransaction("modified properties");
     }

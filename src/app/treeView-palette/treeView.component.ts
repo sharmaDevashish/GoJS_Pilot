@@ -17,10 +17,11 @@ export class TreeViewComponent implements OnInit{
 
     inputArray = [
       { category:"Device1",
-        Name:"Controller",
+        Name:"ControllerYOYO",
         Type:"controller",
         text:"Controller1",
         group:"",
+        grpName:"",
         Description:"Device1 Desc",
         Iports:["PV","SV","PB","Ti","Td"],
         Oports:["MV"],
@@ -31,9 +32,10 @@ export class TreeViewComponent implements OnInit{
         text:"Device2",
         Type:"deivce",
         group:"",
+        grpName:"",
         Description:"Device2 Desc",
-        Iports:["A1","A2"],
-        Oports:["B1"],
+        Iports:["I1","I2"],
+        Oports:["O1"],
         color: "#18499e"
       },
       { category:"variable1",
@@ -41,6 +43,7 @@ export class TreeViewComponent implements OnInit{
         text:"variable1",
         Type:"variable1",
         group:"",
+        grpName:"",
         Description:"variable1 Desc",
         Iports:[],
         Oports:[],
@@ -51,6 +54,7 @@ export class TreeViewComponent implements OnInit{
         text:"variable2",
         Type:"variable2",
         group:"",
+        grpName:"",
         Description:"variable2 Desc",
         Iports:[],
         Oports:[],
@@ -60,9 +64,9 @@ export class TreeViewComponent implements OnInit{
     
       constructor(){
       this.paletteList = new Array(
-        { 'key' : '1' , 'parent' : '','name' : 'PID Controllers','type':'controller','color':'yellow','text': "", 'isTreeLeaf': false},
-        { 'key' : '2' , 'parent' : '','name' : 'Gate Controllers','type':'deivce','color':'yellow','text': "", 'isTreeLeaf': false},
-        { 'key' : '3' , 'parent' : '','name' : 'Variable','type':'variable1','color':'yellow','text': "", 'isTreeLeaf': false}
+        { 'key' : '1' , 'parent' : '','name' : 'PID Controllers','type':'controller','color':'yellow','text': 'PID Controllers', 'isTreeLeaf': false},
+        { 'key' : '2' , 'parent' : '','name' : 'Gate Controllers','type':'deivce','color':'yellow','text': 'Gate Controllers', 'isTreeLeaf': false},
+        { 'key' : '3' , 'parent' : '','name' : 'Variable','type':'variable1','color':'yellow','text': 'Variable', 'isTreeLeaf': false}
       )
     }
   
@@ -122,7 +126,7 @@ export class TreeViewComponent implements OnInit{
                       new go.Binding("source", "isTreeExpanded", this.imageConverter).ofObject(),
                       new go.Binding("source", "isTreeLeaf", this.imageConverter).ofObject()),
                     $(go.TextBlock,{font:" 15px Georgia, Serif"},
-                        new go.Binding("text", "name"))
+                        new go.Binding("text", "text"))
                       ) // end Horizontal Panel
                     ); // end Node
 
@@ -134,8 +138,9 @@ export class TreeViewComponent implements OnInit{
                           obj["name"] = this.inputArray[a].Name;
                           obj["type"] = this.inputArray[a].Type;
                           obj["color"] = this.inputArray[a].color;
-                          obj["text"] = this.inputArray[a].Name;
+                          obj["text"] = this.inputArray[a].text;
                           obj["group"] ="";
+                          obj["grpName"] ="";
                           obj["isTreeLeaf"] = true;
                           this.paletteList.push(obj);
                         }
@@ -144,8 +149,9 @@ export class TreeViewComponent implements OnInit{
                           obj["name"] = this.inputArray[a].Name;
                           obj["type"] = this.inputArray[a].Type;
                           obj["color"] = this.inputArray[a].color;
-                          obj["text"] = this.inputArray[a].Name;
+                          obj["text"] = this.inputArray[a].text;
                           obj["group"] ="";
+                          obj["grpName"] ="";
                           obj["isTreeLeaf"] = true;
                           this.paletteList.push(obj);
                         }
@@ -154,18 +160,16 @@ export class TreeViewComponent implements OnInit{
                           obj["name"] = this.inputArray[a].Name;
                           obj["type"] = this.inputArray[a].Type;
                           obj["color"] = this.inputArray[a].color;
-                          obj["text"] = this.inputArray[a].Name;
+                          obj["text"] = this.inputArray[a].text;
                           obj["group"] ="";
+                          obj["grpName"] ="";
                           obj["isTreeLeaf"] = true;
                           this.paletteList.push(obj);
                         }
                     }
   
                     this.treePalette.model = new go.TreeModel(this.paletteList);
-                    
-
-                    
-    }
+     }
 
     imageConverter(prop, picture) {
       var node = picture.part;
