@@ -40,7 +40,7 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
 
   inputArray = [
     { category:"Device1",
-      Name:"ControllerYOYO",
+      Name:"Controller",
       Type:"controller",
       text:"Controller1",
       group:"",
@@ -49,10 +49,20 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
       Oports:["MV"],
       color: "#18499e"
     },
-    { category:"Device2",
-      Name:"Device2",
-      text:"Device2",
-      Type:"deivce",
+    { category:"AndGate",
+      Name:"AndGate",
+      text:"And Gate",
+      Type:"deviceAndGate",
+      group:"",
+      Description:"AndGate Desc",
+      Iports:["I1","I2"],
+      Oports:["O1"],
+      color: "#18499e"
+    },
+    { category:"Not Gate",
+      Name:"NotGate",
+      text:"Not Gate",
+      Type:"deviceNotGate",
       group:"",
       Description:"Device2 Desc",
       Iports:["I1","I2"],
@@ -143,7 +153,7 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
                 var oport=this.makePort(templateItem.Oports[j],false);
                 _makeportsoutput.push(oport);
                 }
-                this.makeTemplate(//this.inputArray[i].text,
+                this.makeTemplate(this.inputArray[it].Name,
                     this.inputArray[i].Type,
                     this.inputArray[i].text,
                     this.inputArray[i].color,
@@ -194,7 +204,7 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
           var oport=this.makePort(templateItem.Oports[j],false);
           _makeportsoutput.push(oport);
           }
-          this.makeTemplate(this.inputArray[it].Type,
+          this.makeTemplate(this.inputArray[it].Name,this.inputArray[it].Type,
                this.inputArray[it].text,
                this.inputArray[it].color,
                _makeportsinput,
@@ -292,7 +302,7 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
     return panel;
   }
 
-  public makeTemplate(typename,text, background, inports, outports,x,y) {
+  public makeTemplate(name,typename,text, background, inports, outports,x,y) {
     const ggm = go.GraphObject.make; 
  
     if(!typename.includes("variable")){
@@ -343,9 +353,9 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
               
             ggm(go.Panel, "Table",
                 {padding:0},
-              ggm(go.TextBlock, typename,
+              ggm(go.TextBlock, name,
                 {
-                  text:typename,
+                  text:name,
                   row: 0,
                   margin: 3,
                   maxSize: new go.Size(80, NaN),
@@ -506,64 +516,158 @@ save(){
 saveFiles(){
   var model1=new Object();
   model1["Device"] = "grp1";
-  model1["nodeDataArray"] = [];
-  model1["linkDataArray"] = [];
+  model1["nodeList"] = new Object();
+  model1["nodeList"]["controllerList"] = [];
+  model1["nodeList"]["deviceList"] = [];
+  model1["nodeList"]["variableList"] = [];
+  model1["connections"] = new Object();
+  model1["connections"]["local"] = [];
+  model1["connections"]["incoming"] = [];
+  model1["connections"]["outgoing"] = [];
+  
   var model2=new Object();
   model2["Device"] = "grp2";
-  model2["nodeDataArray"] = [];
-  model2["linkDataArray"] = [];
+  model2["nodeList"] = new Object();
+  model2["nodeList"]["controllerList"] = [];
+  model2["nodeList"]["deviceList"] = [];
+  model2["nodeList"]["variableList"] = [];
+  model2["connections"] = new Object();
+  model2["connections"]["local"] = [];
+  model2["connections"]["incoming"] = [];
+  model2["connections"]["outgoing"] = [];
+  
   var myModel = [];
   var myLinks = [];
+  
+  
   myModel = this.diagram.model.nodeDataArray;
-  myLinks = this.diagram.model.linkDataArray;
+  myLinks = this.diagram.model["linkDataArray"];
   
   for(var i=0;i<myModel.length;i++){
     if(myModel[i].group == "grp1"){
-      var nodeData = new Object();
-      nodeData["name"] = myModel[i].name;
-      nodeData["group"] = myModel[i].group;
-      model1["nodeDataArray"].push(nodeData);
-    }
-    else{
-      var nodeData = new Object();
-      nodeData["name"] = myModel[i].name;
-      nodeData["group"] = myModel[i].group;
-      model2["nodeDataArray"].push(nodeData);
+      if(myModel[i].type.includes("controller")){
+        var controllerListData = new Object();
+        controllerListData["name"] = myModel[i].text;
+        controllerListData["group"] = myModel[i].group;
+        controllerListData["type"] = myModel[i].name;
+        model1["nodeList"]["controllerList"].push(controllerListData);
+      }
+      if(myModel[i].type.includes("variable")){
+        var variableListData = new Object();
+        variableListData["name"] = myModel[i].text;
+        variableListData["group"] = myModel[i].group;
+        variableListData["type"] = myModel[i].name;
+        model1["nodeList"]["variableList"].push(variableListData);
+      }
+      if(myModel[i].type.includes("device")){
+        var deviceListData = new Object();
+        deviceListData["name"] = myModel[i].text;
+        deviceListData["group"] = myModel[i].group;
+        deviceListData["type"] = myModel[i].name;
+        model1["nodeList"]["deviceList"].push(deviceListData);
+      }
+    }else{
+      if(myModel[i].type.includes("controller")){
+        var controllerListData = new Object();
+        controllerListData["name"] = myModel[i].text;
+        controllerListData["group"] = myModel[i].group;
+        controllerListData["type"] = myModel[i].name;
+        model2["nodeList"]["controllerList"].push(controllerListData);
+      }
+      if(myModel[i].type.includes("variable")){
+        var variableListData = new Object();
+        variableListData["name"] = myModel[i].text;
+        variableListData["group"] = myModel[i].group;
+        variableListData["type"] = myModel[i].name;
+        model2["nodeList"]["variableList"].push(variableListData);
+      }
+      if(myModel[i].type.includes("device")){
+        var deviceListData = new Object();
+        deviceListData["name"] = myModel[i].text;
+        deviceListData["group"] = myModel[i].group;
+        deviceListData["type"] = myModel[i].name;
+        model2["nodeList"]["deviceList"].push(deviceListData);
+      }
     }
   }
   for(var i=0;i<myLinks.length;i++){
     var linkData = new Object();
-    if(myLinks[i].group == "grp1"){
+    //if(myLinks[i].group == "grp1"){
       for(var it=0;it<myModel.length;it++){
-        if(myModel[it].key == myLinks[i].from){
-          linkData["from"] = myModel[it].Device2;
+        if((myModel[it].key == myLinks[i].from) && (myModel[it].group == "grp1")){
+          for(var a=0;a<myModel.length;a++){
+            if((myModel[a].key == myLinks[i].to) && (myModel[a].group == "grp1")){
+              var localLinksData = new Object();
+              localLinksData["from"] = myModel[it].text;
+              localLinksData["to"] = myModel[a].text;
+              localLinksData["fromPID"] = myLinks[i].frompid;
+              localLinksData["toPID"] = myLinks[i].topid;
+              model1["connections"]["local"].push(localLinksData);
+            }
+            if((myModel[a].key == myLinks[i].to) && (myModel[a].group != "grp1")){
+              var outLinksData = new Object();
+              outLinksData["from"] = myModel[it].text;
+              outLinksData["to"] = myModel[a].text;
+              outLinksData["fromPID"] = myLinks[i].frompid;
+              outLinksData["toPID"] = myLinks[i].topid;
+              model1["connections"]["outgoing"].push(outLinksData);
+            }
+          }
+        }
+        if((myModel[it].key == myLinks[i].from) && (myModel[it].group != "grp1")){
+          for(var b=0;b<myModel.length;b++){
+            if((myModel[b].key == myLinks[i].to) && (myModel[b].group == "grp1")){
+              var inLinksData = new Object();
+              inLinksData["from"] = myModel[it].text;
+              inLinksData["to"] = myModel[b].text;
+              inLinksData["fromPID"] = myLinks[i].frompid;
+              inLinksData["toPID"] = myLinks[i].topid;
+              inLinksData["fromGrp"] = myModel[it].group;
+              model1["connections"]["incoming"].push(inLinksData);
+            }
+          }
         }
       }
-      linkData["grpFrom"] = "grp1";
-      linkData["fromPID"] = myLinks[i].frompid;
-      linkData["toPID"] = myLinks[i].topid;
+  }
+
+  for(var i=0;i<myLinks.length;i++){
+    var linkData = new Object();
+    //if(myLinks[i].group == "grp1"){
       for(var it=0;it<myModel.length;it++){
-        if(myModel[it].key == myLinks[i].to){
-          linkData["to"] = myModel[it].Device2;
+        if((myModel[it].key == myLinks[i].from) && (myModel[it].group == "grp2")){
+          for(var a=0;a<myModel.length;a++){
+            if((myModel[a].key == myLinks[i].to) && (myModel[a].group == "grp2")){
+              var localLinksData = new Object();
+              localLinksData["from"] = myModel[it].text;
+              localLinksData["to"] = myModel[a].text;
+              localLinksData["fromPID"] = myLinks[i].frompid;
+              localLinksData["toPID"] = myLinks[i].topid;
+              model2["connections"]["local"].push(localLinksData);
+            }
+            if((myModel[a].key == myLinks[i].to) && (myModel[a].group != "grp2")){
+              var outLinksData = new Object();
+              outLinksData["from"] = myModel[it].text;
+              outLinksData["to"] = myModel[a].text;
+              outLinksData["fromPID"] = myLinks[i].frompid;
+              outLinksData["toPID"] = myLinks[i].topid;
+              model2["connections"]["outgoing"].push(outLinksData);
+            }
+          }
+        }
+        if((myModel[it].key == myLinks[i].from) && (myModel[it].group != "grp2")){
+          for(var b=0;b<myModel.length;b++){
+            if((myModel[b].key == myLinks[i].to) && (myModel[b].group == "grp2")){
+              var inLinksData = new Object();
+              inLinksData["from"] = myModel[it].text;
+              inLinksData["to"] = myModel[b].text;
+              inLinksData["fromPID"] = myLinks[i].frompid;
+              inLinksData["toPID"] = myLinks[i].topid;
+              inLinksData["fromGrp"] = myModel[it].group;
+              model2["connections"]["incoming"].push(inLinksData);
+            }
+          }
         }
       }
-      model2["linkDataArray"].push(linkData);
-    }else{
-      for(var it=0;it<myModel.length;it++){
-        if(myModel[it].key == myLinks[i].from){
-          linkData["from"] = myModel[it].Device2;
-        }
-      }
-      linkData["grpFrom"] = "grp2";
-      linkData["fromPID"] = myLinks[i].frompid;
-      linkData["toPID"] = myLinks[i].topid;
-      for(var it=0;it<myModel.length;it++){
-        if(myModel[it].key == myLinks[i].to){
-          linkData["to"] = myModel[it].Device2;
-        }
-      }
-      model1["linkDataArray"].push(linkData);
-    }
   }
   console.log(JSON.stringify(model1));
   console.log(JSON.stringify(model2));

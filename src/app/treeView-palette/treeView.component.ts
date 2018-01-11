@@ -17,22 +17,30 @@ export class TreeViewComponent implements OnInit{
 
     inputArray = [
       { category:"Device1",
-        Name:"ControllerYOYO",
+        Name:"Controller",
         Type:"controller",
         text:"Controller1",
         group:"",
-        grpName:"",
         Description:"Device1 Desc",
         Iports:["PV","SV","PB","Ti","Td"],
         Oports:["MV"],
         color: "#18499e"
       },
-      { category:"Device2",
-        Name:"Device2",
-        text:"Device2",
-        Type:"deivce",
+      { category:"AndGate",
+        Name:"AndGate",
+        text:"And Gate",
+        Type:"deviceAndGate",
         group:"",
-        grpName:"",
+        Description:"AndGate Desc",
+        Iports:["I1","I2"],
+        Oports:["O1"],
+        color: "#18499e"
+      },
+      { category:"Not Gate",
+        Name:"NotGate",
+        text:"Not Gate",
+        Type:"deviceNotGate",
+        group:"",
         Description:"Device2 Desc",
         Iports:["I1","I2"],
         Oports:["O1"],
@@ -43,7 +51,6 @@ export class TreeViewComponent implements OnInit{
         text:"variable1",
         Type:"variable1",
         group:"",
-        grpName:"",
         Description:"variable1 Desc",
         Iports:[],
         Oports:[],
@@ -54,7 +61,6 @@ export class TreeViewComponent implements OnInit{
         text:"variable2",
         Type:"variable2",
         group:"",
-        grpName:"",
         Description:"variable2 Desc",
         Iports:[],
         Oports:[],
@@ -155,7 +161,7 @@ export class TreeViewComponent implements OnInit{
                           obj["isTreeLeaf"] = true;
                           this.paletteList.push(obj);
                         }
-                        if(this.inputArray[a].Type.includes("deivce")){
+                        if(this.inputArray[a].Type.includes("device")){
                           obj["parent"] = "2";
                           obj["name"] = this.inputArray[a].Name;
                           obj["type"] = this.inputArray[a].Type;
