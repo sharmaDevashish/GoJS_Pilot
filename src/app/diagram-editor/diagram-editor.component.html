@@ -10,11 +10,26 @@
       <button (click)= "saveFiles()" class="btn" >Save Files</button>
       <button (click)= "addToGrp1()" class="btn" style="margin:10px">Add to Grp1</button>
       <button (click)= "addToGrp2()" class="btn" style="margin:10px">Add to Grp2</button>
+      <label class="btn" style="margin:10px">Execution Order</label>
     </div>
     <div class style="float:right">
       <button (click)="zoomIn()" class="btn" style="margin:10px">Zoom In</button>
       <button (click)= "zoomOut()" class="btn" style="margin:10px">Zoom Out</button>
     </div>
+    <div>
+        <table border="1" style="margin:10px">
+          <tr>
+            <td align="center" width="60px" *ngFor="let item of messages; let i = index">
+              {{i}}
+            </td>
+          </tr>
+          <tr>
+            <td align="center"  width="60px" *ngFor="let item of messages; let i = index">
+              {{item}}
+            </td>
+          </tr>
+        </table>
+      </div> 
     
  </div>
 

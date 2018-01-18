@@ -20,6 +20,7 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
   DiaModel:any;
   selectedNode:any;
   flag:boolean;
+  messages:any;
   
   @ViewChild('diagramDiv')
   private diagramRef: ElementRef;
@@ -343,7 +344,7 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
                     {selectionAdorned: true,location:new go.Point(x,y)},
                     new go.Binding("location", "loc",go.Point.parse).makeTwoWay(go.Point.stringify),
           ggm(go.Panel, "Auto",
-            {width: 120,height:17*a,minSize:new go.Size(120,80)},//mouseEnter: this.mouseEnter,mouseLeave: this.mouseLeave},
+            {width: 120,height:17*a,minSize:new go.Size(120,80),mouseEnter: this.mouseEnter,mouseLeave: this.mouseLeave},
             ggm(go.Shape, "RoundedRectangle",
               {
                 fill: background, stroke: null, strokeWidth: 0,
@@ -435,7 +436,7 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
       }
     }
 
- /*mouseEnter(e,obj){
+ mouseEnter(e,obj){
   var shape = obj.findObject("SHAPE");
   shape.fill = "#6DAB80";
   shape.stroke = "#A6E6A1";
@@ -446,7 +447,7 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
     // Return the Shape's fill and stroke to the defaults
     shape.fill = "#18499e";
     shape.stroke = null;
-  };*/
+  };
 
   /*makeNode(text,Type,Name,color,_makeportsinput,_makeportsoutput,x,y){
     this.diagram.startTransaction("add node");
@@ -460,9 +461,6 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
   addToGrp1(){
     console.log(this.diagram.selection.toArray());
     var selNodes = this.diagram.selection.toArray();
-    /*this.diagram.startTransaction("make new group");
-    this.diagram.model.addNodeData({ key: "Omega", isGroup: true });
-    this.diagram.commitTransaction("make new group");*/
     
     for(var a=0;a<selNodes.length;a++){
       this.diagram.startTransaction("add new member");
@@ -485,7 +483,7 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
     }
   }
 
-  showGrid(){
+  /*showGrid(){
     const ggm = go.GraphObject.make;
     var point = new go.Point(0,0)
     for(var i=0;i<5;i++){
@@ -504,7 +502,7 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
         )
     }
   }
-}
+}*/
 
 save(){
   console.log(this.diagram.model);
@@ -514,28 +512,29 @@ save(){
 }
 
 saveFiles(){
+  this.generateXML();
   var model1=new Object();
   model1["Device"] = "grp1";
   model1["nodeList"] = new Object();
   model1["nodeList"]["functionBlockList"] = [];
-  //model1["nodeList"]["deviceList"] = [];
   model1["nodeList"]["variableList"] = [];
   model1["connections"] = new Object();
   model1["connections"]["local"] = [];
   model1["connections"]["incoming"] = [];
   model1["connections"]["outgoing"] = [];
+  model1["executionOrder"] = [];
   
   var model2=new Object();
   model2["Device"] = "grp2";
   model2["nodeList"] = new Object();
   model2["nodeList"]["functionBlockList"] = [];
-  ///model2["nodeList"]["deviceList"] = [];
   model2["nodeList"]["variableList"] = [];
   model2["connections"] = new Object();
   model2["connections"]["local"] = [];
   model2["connections"]["incoming"] = [];
   model2["connections"]["outgoing"] = [];
-  
+  model2["executionOrder"] = [];
+
   var myModel = [];
   var myLinks = [];
   
@@ -559,13 +558,6 @@ saveFiles(){
         variableListData["type"] = myModel[i].name;
         model1["nodeList"]["variableList"].push(variableListData);
       }
-      /*if(myModel[i].type.includes("device")){
-        var deviceListData = new Object();
-        deviceListData["name"] = myModel[i].text;
-        deviceListData["group"] = myModel[i].group;
-        deviceListData["type"] = myModel[i].name;
-        model1["nodeList"]["deviceList"].push(deviceListData);
-      }*/
     }else{
       if(myModel[i].type.includes("controller") || myModel[i].type.includes("device")){
         var controllerListData = new Object();
@@ -581,19 +573,11 @@ saveFiles(){
         variableListData["type"] = myModel[i].name;
         model2["nodeList"]["variableList"].push(variableListData);
       }
-      /*if(myModel[i].type.includes("device")){
-        var deviceListData = new Object();
-        deviceListData["name"] = myModel[i].text;
-        deviceListData["group"] = myModel[i].group;
-        deviceListData["type"] = myModel[i].name;
-        model2["nodeList"]["deviceList"].push(deviceListData);
-      }*/
     }
   }
   for(var i=0;i<myLinks.length;i++){
     var linkData = new Object();
-    //if(myLinks[i].group == "grp1"){
-      for(var it=0;it<myModel.length;it++){
+    for(var it=0;it<myModel.length;it++){
         if((myModel[it].key == myLinks[i].from) && (myModel[it].group == "grp1")){
           for(var a=0;a<myModel.length;a++){
             if((myModel[a].key == myLinks[i].to) && (myModel[a].group == "grp1")){
@@ -627,13 +611,13 @@ saveFiles(){
             }
           }
         }
-      }
+       }
   }
+  model1["executionOrder"].push(this.messages);
 
   for(var i=0;i<myLinks.length;i++){
     var linkData = new Object();
-    //if(myLinks[i].group == "grp1"){
-      for(var it=0;it<myModel.length;it++){
+    for(var it=0;it<myModel.length;it++){
         if((myModel[it].key == myLinks[i].from) && (myModel[it].group == "grp2")){
           for(var a=0;a<myModel.length;a++){
             if((myModel[a].key == myLinks[i].to) && (myModel[a].group == "grp2")){
@@ -669,6 +653,8 @@ saveFiles(){
         }
       }
   }
+  model2["executionOrder"].push(this.messages);
+
   console.log(JSON.stringify(model1));
   console.log(JSON.stringify(model2));
 }
@@ -679,6 +665,796 @@ zoomIn(){
 
 zoomOut(){
   this.diagram.commandHandler.decreaseZoom();
+}
+
+generateXML() {
+
+  var data = this.model;
+  var myModel = JSON.stringify(data);
+  var modelData = JSON.parse(myModel);
+  var funcs = [];
+  var funcsloops = [];
+  var funcsloops_prev = [];
+
+  var funcs_with_only_variable_inputs = [];
+  var funcs_with_only_variable_func_inputs = [];
+  var funcs_with_out_varibale_inputs = [];
+  var funcs_with_out_inputs = [];
+  var Virtical = false;
+
+  var firstSortNodes = [];
+  var locs = [];
+  modelData = JSON.parse(modelData);
+  var model_save = { "class": "go.GraphLinksModel", "nodeCategoryProperty": "type", "linkFromPortIdProperty": "frompid", "linkToPortIdProperty": "topid", "nodeDataArray": modelData.nodeDataArray, "linkDataArray": modelData.linkDataArray }
+
+  //Identify Functons
+  var j = 0;
+  var _next = [];
+  var _prev = [];
+  var tmp_nxt = [];
+
+  modelData.nodeDataArray.forEach(_node => {
+    if (_node.IP_ports.length > 0) {
+      locs = _node.loc.split(" ");
+
+      for (let k = 0; k < modelData.linkDataArray.length; k++) {
+
+        if (modelData.linkDataArray[k].from == _node.key) {
+          _next.push(modelData.linkDataArray[k].to)
+          funcsloops.push({ "sno": j, "key": _node.key, "name": _node.text, "pure_inputs": "0", "hybrid_inputs": "0", "total_inputs": "0", "pure_outputs": "0", "hybrid_outputs": "0", "total_outputs": "0", "xaxis": parseInt(locs[0]), "yaxis": parseInt(locs[1]), "inputs": _node.IP_ports, "outputs": _node.OP_ports, "next": modelData.linkDataArray[k].to, "loop": 0 });
+        }
+
+        if (modelData.linkDataArray[k].to == _node.key)
+          _prev.push(modelData.linkDataArray[k].from)
+        funcsloops_prev.push({ "sno": j, "key": _node.key, "name": _node.text, "pure_inputs": "0", "hybrid_inputs": "0", "total_inputs": "0", "pure_outputs": "0", "hybrid_outputs": "0", "total_outputs": "0", "xaxis": parseInt(locs[0]), "yaxis": parseInt(locs[1]), "inputs": _node.IP_ports, "outputs": _node.OP_ports, "next": modelData.linkDataArray[k].from, "loop": 0 });
+
+      }
+
+      funcs.push({ "sno": j, "key": _node.key, "name": _node.text, "pure_inputs": "0", "hybrid_inputs": "0", "total_inputs": "0", "pure_outputs": "0", "hybrid_outputs": "0", "total_outputs": "0", "xaxis": parseInt(locs[0]), "yaxis": parseInt(locs[1]), "inputs": _node.IP_ports, "outputs": _node.OP_ports, "next": _next.join(","), "prev": _prev.join(",") ,"loop":0});
+
+
+    }
+
+    _next.splice(0, _next.length);
+    _prev.splice(0, _prev.length);
+
+  });
+
+  var first;
+  var next;
+  var st;
+  var inarr = [];
+  var outarr = [];
+  var tmnext;
+  var loop = [];
+  var loop_and_nonloops = [];
+  var loop_and_nonloops_prev = [];
+
+
+  var swapflag;
+
+  var maxx = Math.max.apply(Math, funcs.map(function (o) { return o.xaxis; }));
+  var minx = Math.min.apply(Math, funcs.map(function (o) { return o.xaxis; }));
+
+  var maxy = Math.max.apply(Math, funcs.map(function (o) { return o.yaxis; }));
+  var miny = Math.min.apply(Math, funcs.map(function (o) { return o.yaxis; }));
+
+
+  if ((maxy - miny) > (maxx - minx)) {
+
+  }
+  else {
+    Virtical = false;
+    console.log("my:" + (maxy - miny) + " mx:" + (maxx - minx))
+  }
+
+
+  /*var tempfuncSwap;
+  for (var k = 0; k < funcs.length; k++) {
+    for (var it = k + 1; it < funcs.length; it++) {
+      tempfuncSwap = funcs[i];
+      if
+    }
+  }*/
+  funcs.forEach(_node => {
+
+
+
+    modelData.linkDataArray.forEach(_nodelinks => {
+
+      if (_nodelinks.from == _node.key) {
+        _node.total_outputs++;
+        if (funcs.find(o => o.key === _nodelinks.to)) {
+          _node.hybrid_outputs++;
+        }
+        else {
+          _node.pure_outputs++;
+        }
+      }
+      if (_nodelinks.to == _node.key) {
+        _node.total_inputs++;
+        if (funcs.find(o => o.key === _nodelinks.from)) {
+          _node.hybrid_inputs++;
+        }
+        else {
+          _node.pure_inputs++;
+        }
+      }
+
+    });
+
+    if (_node.pure_inputs > 0)
+      _node.hybrid_inputs = _node.hybrid_inputs - _node.loop;
+
+    if (_node.hybrid_inputs < 0)
+      _node.hybrid_inputs = 0;
+
+    firstSortNodes.push(_node);
+  });
+
+  let inPortstemp = [];
+  let outPortstemp = [];
+
+  for (it = 0; it < firstSortNodes.length; it++) {
+
+    for (let it2 = 0; it2 < modelData.linkDataArray.length; it2++) {
+
+    }
+    inPortstemp.splice(0, inPortstemp.length);
+    outPortstemp.splice(0, outPortstemp.length);
+
+  }
+
+
+
+  console.log(funcs);
+  firstSortNodes.forEach(_nodes => {
+    if ((_nodes.pure_inputs > 0 && _nodes.hybrid_inputs == 0) || (_nodes.pure_inputs == 0 && _nodes.hybrid_inputs == 0 && _nodes.total_outputs > 0)) {
+      funcs_with_only_variable_inputs.push(_nodes);
+    }
+    else if (_nodes.pure_inputs > 0 && _nodes.hybrid_inputs > 0) {
+      funcs_with_only_variable_func_inputs.push(_nodes);
+    }
+    else if (_nodes.pure_inputs == 0 && _nodes.hybrid_inputs > 0) {
+      funcs_with_only_variable_func_inputs.push(_nodes);
+    }
+    else if (_nodes.pure_inputs == 0 && _nodes.hybrid_inputs == 0 && _nodes.total_outputs == 0) {
+      funcs_with_out_inputs.push(_nodes);
+    }
+
+  });
+
+
+
+
+
+
+
+
+
+  console.log(modelData.nodeDataArray);
+  console.log(modelData.linkDataArray);
+
+  let dependent_funcs = [];
+  let splice_nodes = [];
+
+  funcs_with_only_variable_inputs.sort(function (node1, node2) { return node1.pure_inputs - node2.pure_inputs });
+  funcs_with_only_variable_func_inputs.sort(function (node1, node2) { return node1.total_inputs - node2.total_inputs });
+  funcs_with_out_varibale_inputs.sort(function (node1, node2) { return node1.total_inputs - node2.total_inputs });
+  funcs_with_out_inputs.sort(function (node1, node2) { return node1.total_outputs - node2.total_outputs });
+
+
+  for (var i = 0; i < funcs_with_only_variable_inputs.length; i++) {
+    for (var j = i + 1; j < funcs_with_only_variable_inputs.length; j++) {
+      tempSwap = funcs_with_only_variable_inputs[i];
+
+      if (tempSwap.total_inputs == funcs_with_only_variable_inputs[j].total_inputs) {
+        if (tempSwap.total_outputs < funcs_with_only_variable_inputs[j].total_outputs) {
+          funcs_with_only_variable_inputs[i] = funcs_with_only_variable_inputs[j];
+          funcs_with_only_variable_inputs[j] = tempSwap;
+
+        }
+        else if (tempSwap.total_outputs == funcs_with_only_variable_inputs[j].total_outputs) {
+          if (Virtical == false) {
+            if (tempSwap.xaxis > funcs_with_only_variable_inputs[j].xaxis) {
+              funcs_with_only_variable_inputs[i] = funcs_with_only_variable_inputs[j];
+              funcs_with_only_variable_inputs[j] = tempSwap;
+            }
+          }
+          else {
+            if (tempSwap.yaxis > funcs_with_only_variable_inputs[j].yaxis) {
+              funcs_with_only_variable_inputs[i] = funcs_with_only_variable_inputs[j];
+              funcs_with_only_variable_inputs[j] = tempSwap;
+            }
+          }
+
+
+        }
+      }
+    }
+  }
+
+
+  let temp_functions = [];
+  let nextstmp = [];
+  let prevtmp = [];
+
+
+
+
+
+
+
+
+  var tempSwap;
+  var Executionorder = [];
+
+  for (var i = 0; i < funcs_with_out_inputs.length; i++) {
+    for (var j = i + 1; j < funcs_with_out_inputs.length; j++) {
+      tempSwap = funcs_with_out_inputs[i];
+
+      if (tempSwap.total_inputs == funcs_with_out_inputs[j].total_inputs) {
+        if (tempSwap.total_outputs < funcs_with_out_inputs[j].total_outputs) {
+          funcs_with_out_inputs[i] = funcs_with_out_inputs[j];
+          funcs_with_out_inputs[j] = tempSwap;
+
+        }
+        else if (tempSwap.total_outputs == funcs_with_out_inputs[j].total_outputs) {
+          if (Virtical == false) {
+            if (tempSwap.xaxis > funcs_with_out_inputs[j].xaxis) {
+              funcs_with_out_inputs[i] = funcs_with_out_inputs[j];
+              funcs_with_out_inputs[j] = tempSwap;
+            }
+          }
+          else {
+            if (tempSwap.yaxis > funcs_with_out_inputs[j].yaxis) {
+              funcs_with_out_inputs[i] = funcs_with_out_inputs[j];
+              funcs_with_out_inputs[j] = tempSwap;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  for (var i = 0; i < funcs_with_only_variable_inputs.length; i++) {
+    for (var j = i + 1; j < funcs_with_only_variable_inputs.length; j++) {
+      tempSwap = funcs_with_only_variable_inputs[i];
+
+      if (tempSwap.total_inputs == funcs_with_only_variable_inputs[j].total_inputs) {
+        if (tempSwap.total_outputs < funcs_with_only_variable_inputs[j].total_outputs) {
+          funcs_with_only_variable_inputs[i] = funcs_with_only_variable_inputs[j];
+          funcs_with_only_variable_inputs[j] = tempSwap;
+
+        }
+        else if (tempSwap.total_outputs == funcs_with_only_variable_inputs[j].total_outputs) {
+          if (Virtical == false) {
+            if (tempSwap.xaxis > funcs_with_only_variable_inputs[j].xaxis) {
+              funcs_with_only_variable_inputs[i] = funcs_with_only_variable_inputs[j];
+              funcs_with_only_variable_inputs[j] = tempSwap;
+            }
+          }
+          else {
+            if (tempSwap.yaxis > funcs_with_only_variable_inputs[j].yaxis) {
+              funcs_with_only_variable_inputs[i] = funcs_with_only_variable_inputs[j];
+              funcs_with_only_variable_inputs[j] = tempSwap;
+            }
+          }
+
+
+        }
+      }
+    }
+  }
+
+  for (var i = 0; i < funcs_with_only_variable_inputs.length; i++) {
+    for (var j = i + 2; j < funcs_with_only_variable_inputs.length; j++) {
+      tempSwap = funcs_with_only_variable_inputs[i];
+      swapflag = true;
+      for (var it = 0; it < modelData.linkDataArray.length; it++) {
+        if (modelData.linkDataArray[it].from == tempSwap.key && modelData.linkDataArray[it].to == funcs_with_only_variable_inputs[j - 1].key) {
+          {
+            swapflag = false;
+          }
+        }
+      }
+      if (swapflag == true) {
+        for (var it = 0; it < modelData.linkDataArray.length; it++) {
+          if (modelData.linkDataArray[it].from == tempSwap.key && modelData.linkDataArray[it].to == funcs_with_only_variable_inputs[j].key) {
+            {
+              tempswap2 = funcs_with_only_variable_inputs[j];
+              funcs_with_only_variable_inputs[j] = funcs_with_only_variable_inputs[j - 1];
+              funcs_with_only_variable_inputs[j - 1] = tempswap2;
+            }
+          }
+        }
+      }
+    }
+  }
+
+
+  for (var i = 0; i < funcs_with_only_variable_func_inputs.length; i++) {
+    for (var j = i + 1; j < funcs_with_only_variable_func_inputs.length; j++) {
+      tempSwap = funcs_with_only_variable_func_inputs[i];
+      if (tempSwap.total_inputs == funcs_with_only_variable_func_inputs[j].total_inputs) {
+        if (tempSwap.total_outputs < funcs_with_only_variable_func_inputs[j].total_outputs) {
+          funcs_with_only_variable_func_inputs[i] = funcs_with_only_variable_func_inputs[j];
+          funcs_with_only_variable_func_inputs[j] = tempSwap;
+
+        }
+        else if (tempSwap.total_outputs == funcs_with_only_variable_func_inputs[j].total_outputs) {
+
+          if (Virtical == false) {
+            if (tempSwap.xaxis > funcs_with_only_variable_func_inputs[j].xaxis) {
+              funcs_with_only_variable_func_inputs[i] = funcs_with_only_variable_func_inputs[j];
+              funcs_with_only_variable_func_inputs[j] = tempSwap;
+            }
+          }
+          else {
+            if (tempSwap.yaxis > funcs_with_only_variable_func_inputs[j].yaxis) {
+              funcs_with_only_variable_func_inputs[i] = funcs_with_only_variable_func_inputs[j];
+              funcs_with_only_variable_func_inputs[j] = tempSwap;
+            }
+          }
+
+        }
+      }
+    }
+  }
+
+  for (var i = 0; i < funcs_with_only_variable_func_inputs.length; i++) {
+    for (var j = i + 2; j < funcs_with_only_variable_func_inputs.length; j++) {
+      tempSwap = funcs_with_only_variable_func_inputs[i];
+      swapflag = true;
+      for (var it = 0; it < modelData.linkDataArray.length; it++) {
+        if (modelData.linkDataArray[it].from == tempSwap.key && modelData.linkDataArray[it].to == funcs_with_only_variable_func_inputs[j - 1].key) {
+          {
+            swapflag = false;
+          }
+        }
+      }
+      if (swapflag == true) {
+        for (var it = 0; it < modelData.linkDataArray.length; it++) {
+          if (modelData.linkDataArray[it].from == tempSwap.key && modelData.linkDataArray[it].to == funcs_with_only_variable_func_inputs[j].key) {
+            {
+              tempswap2 = funcs_with_only_variable_func_inputs[j];
+              funcs_with_only_variable_func_inputs[j] = funcs_with_only_variable_func_inputs[j - 1];
+              funcs_with_only_variable_func_inputs[j - 1] = tempswap2;
+            }
+          }
+        }
+      }
+    }
+  }
+
+
+
+  var connections = [];
+  var lp = false;
+  var tempswap2;
+  var loop_start = false;
+  var start;
+  var tmpstart;
+  for (var i = 0; i < funcs_with_out_varibale_inputs.length; i++) {
+    for (var j = i + 1; j < funcs_with_out_varibale_inputs.length; j++) {
+      tempSwap = funcs_with_out_varibale_inputs[i];
+      if (tempSwap.total_inputs == funcs_with_out_varibale_inputs[j].total_inputs) {
+        if (tempSwap.total_outputs < funcs_with_out_varibale_inputs[j].total_outputs) {
+          funcs_with_out_varibale_inputs[i] = funcs_with_out_varibale_inputs[j];
+          funcs_with_out_varibale_inputs[j] = tempSwap;
+
+        }
+        else if (tempSwap.total_outputs == funcs_with_out_varibale_inputs[j].total_outputs) {
+
+          if (Virtical == false) {
+            if (tempSwap.xaxis > funcs_with_out_varibale_inputs[j].xaxis) {
+              funcs_with_out_varibale_inputs[i] = funcs_with_out_varibale_inputs[j];
+              funcs_with_out_varibale_inputs[j] = tempSwap;
+            }
+          }
+          else {
+            if (tempSwap.yaxis > funcs_with_out_varibale_inputs[j].yaxis) {
+              funcs_with_out_varibale_inputs[i] = funcs_with_out_varibale_inputs[j];
+              funcs_with_out_varibale_inputs[j] = tempSwap;
+            }
+          }
+
+
+        }
+      }
+    }
+  }
+
+  for (var i = 0; i < funcs_with_out_varibale_inputs.length; i++) {
+    nextstmp = funcs_with_out_varibale_inputs[i]._prev.split(",");
+    for (let k = 0; k < nextstmp.length; k++) {
+      loop_start = true;
+      start = funcs_with_out_varibale_inputs[i].key;
+      tmpstart = nextstmp[k];
+
+      while (loop_start == true) {
+        for (it = 0; it < funcs_with_out_varibale_inputs.length; it++) {
+          if (funcs_with_out_varibale_inputs[it].key == tmpstart) {
+
+          }
+          nextstmp = funcs_with_out_varibale_inputs[it]._next.split(",");
+          for (let it2 = 0; it2 < nextstmp.length; it2++) {
+
+          }
+        }
+      }
+    }
+
+  }
+
+
+
+
+  for (var i = 0; i < funcs_with_out_varibale_inputs.length; i++) {
+    for (var j = i + 2; j < funcs_with_out_varibale_inputs.length; j++) {
+      tempSwap = funcs_with_out_varibale_inputs[i];
+      swapflag = true;
+      for (var it = 0; it < modelData.linkDataArray.length; it++) {
+        if (modelData.linkDataArray[it].from == tempSwap.key && modelData.linkDataArray[it].to == funcs_with_out_varibale_inputs[j - 1].key) {
+          {
+            swapflag = false;
+          }
+        }
+      }
+      if (swapflag == true) {
+        for (var it = 0; it < modelData.linkDataArray.length; it++) {
+          if (modelData.linkDataArray[it].from == tempSwap.key && modelData.linkDataArray[it].to == funcs_with_out_varibale_inputs[j].key) {
+            {
+              tempswap2 = funcs_with_out_varibale_inputs[j];
+              funcs_with_out_varibale_inputs[j] = funcs_with_out_varibale_inputs[j - 1];
+              funcs_with_out_varibale_inputs[j - 1] = tempswap2;
+            }
+          }
+        }
+      }
+    }
+  }
+
+
+
+
+
+  var sorted_iports = [];
+  var sorted_oports = [];
+  funcs_with_only_variable_inputs.forEach(_node => {
+
+
+
+
+    _node.inputs.forEach(_port => {
+
+      modelData.linkDataArray.forEach(_links => {
+        if (_links.topid == _port && _links.to == _node.key) {
+          modelData.nodeDataArray.forEach(_tmpnode => {
+            if (_links.from == _tmpnode.key) {
+              if (_tmpnode.IP_ports.length == 0) {
+                sorted_iports.push({ "port": _tmpnode.text, "type": "0" });
+              }
+              else {
+                if (modelData.linkDataArray.find(o => o.to === _tmpnode.key)) {
+
+                }
+                else {
+                  sorted_iports.push({ "port": _tmpnode.text, "type": "0" });
+                }
+                //sorted_iports.push({ "port": _tmpnode.name, "type": "1" });
+              }
+            }
+          });
+        }
+
+      });
+
+    });
+
+    _node.outputs.forEach(_port => {
+
+      modelData.linkDataArray.forEach(_links => {
+        if (_links.frompid == _port && _links.from == _node.key) {
+          modelData.nodeDataArray.forEach(_tmpnode => {
+            if (_links.to == _tmpnode.key) {
+              if (_tmpnode.OP_ports.length == 0) {
+                sorted_oports.push({ "port": _tmpnode.text, "type": "0" });
+              }
+              if (_tmpnode.IP_ports.length > 0 || _tmpnode.OP_ports.length > 0) {
+                //sorted_oports.push({ "port": _tmpnode.name, "type": "1" });
+              }
+            }
+          });
+        }
+
+      });
+
+    });
+
+    sorted_iports.forEach(_inputs => {
+      if (Executionorder.find(o => o === _inputs.port)) {
+
+      }
+      else {
+        if (!modelData.linkDataArray.find(o => o.topid === _inputs.port)) {
+          Executionorder.push(_inputs.port);
+        }
+
+      }
+
+    });
+
+    Executionorder.push(_node.name);
+
+    sorted_oports.forEach(_inputs => {
+      if (Executionorder.find(o => o === _inputs.port)) {
+
+      }
+      else {
+        if (!modelData.linkDataArray.find(o => o.frompid === _inputs.port)) {
+          Executionorder.push(_inputs.port);
+        }
+      }
+    });
+
+
+    sorted_iports.splice(0, sorted_iports.length);
+    sorted_oports.splice(0, sorted_oports.length);
+
+  });
+
+
+
+  funcs_with_only_variable_func_inputs.forEach(_node => {
+
+    _node.inputs.forEach(_port => {
+
+      modelData.linkDataArray.forEach(_links => {
+        if (_links.topid == _port && _links.to == _node.key) {
+          modelData.nodeDataArray.forEach(_tmpnode => {
+            if (_links.from == _tmpnode.key) {
+              if (_tmpnode.IP_ports.length == 0) {
+                sorted_iports.push({ "port": _tmpnode.text, "type": "0" });
+              }
+              else {
+                if (modelData.linkDataArray.find(o => o.to === _tmpnode.key)) {
+
+                }
+                else {
+                  sorted_iports.push({ "port": _tmpnode.text, "type": "0" });
+                }
+                //sorted_iports.push({ "port": _tmpnode.name, "type": "1" });
+              }
+            }
+          });
+        }
+
+      });
+
+    });
+
+    _node.outputs.forEach(_port => {
+
+      modelData.linkDataArray.forEach(_links => {
+        if (_links.frompid == _port && _links.from == _node.key) {
+          modelData.nodeDataArray.forEach(_tmpnode => {
+            if (_links.to == _tmpnode.key) {
+              if (_tmpnode.OP_ports.length == 0) {
+                sorted_oports.push({ "port": _tmpnode.text, "type": "0" });
+              }
+              if (_tmpnode.IP_ports.length > 0 || _tmpnode.OP_ports.length > 0) {
+                //sorted_oports.push({ "port": _tmpnode.name, "type": "1" });
+              }
+            }
+          });
+        }
+
+      });
+
+    });
+
+    sorted_iports.forEach(_inputs => {
+      if (Executionorder.find(o => o === _inputs.port)) {
+
+      }
+      else {
+        if (!modelData.linkDataArray.find(o => o.topid === _inputs.port)) {
+          Executionorder.push(_inputs.port);
+        }
+      }
+
+    });
+
+    Executionorder.push(_node.name);
+
+    sorted_oports.forEach(_inputs => {
+      if (Executionorder.find(o => o === _inputs.port)) {
+
+      }
+      else {
+        if (!modelData.linkDataArray.find(o => o.frompid === _inputs.port)) {
+          Executionorder.push(_inputs.port);
+        }
+      }
+    });
+
+    sorted_iports.splice(0, sorted_iports.length);
+    sorted_oports.splice(0, sorted_oports.length);
+
+  });
+
+
+
+
+  funcs_with_out_varibale_inputs.forEach(_node => {
+
+    _node.inputs.forEach(_port => {
+
+      modelData.linkDataArray.forEach(_links => {
+        if (_links.topid == _port && _links.to == _node.key) {
+          modelData.nodeDataArray.forEach(_tmpnode => {
+            if (_links.from == _tmpnode.key) {
+              if (_tmpnode.IP_ports.length == 0) {
+                sorted_iports.push({ "port": _tmpnode.text, "type": "0" });
+              }
+              else {
+                if (modelData.linkDataArray.find(o => o.to === _tmpnode.key)) {
+
+                }
+                else {
+                  sorted_iports.push({ "port": _tmpnode.text, "type": "0" });
+                }
+                //sorted_iports.push({ "port": _tmpnode.name, "type": "1" });
+              }
+            }
+          });
+        }
+
+      });
+
+    });
+
+    _node.outputs.forEach(_port => {
+
+      modelData.linkDataArray.forEach(_links => {
+        if (_links.frompid == _port && _links.from == _node.key) {
+          modelData.nodeDataArray.forEach(_tmpnode => {
+            if (_links.to == _tmpnode.key) {
+              if (_tmpnode.OP_ports.length == 0) {
+                sorted_oports.push({ "port": _tmpnode.text, "type": "0" });
+              }
+              if (_tmpnode.IP_ports.length > 0 || _tmpnode.OP_ports.length > 0) {
+                //sorted_oports.push({ "port": _tmpnode.name, "type": "1" });
+              }
+            }
+          });
+        }
+
+      });
+
+    });
+
+    sorted_iports.forEach(_inputs => {
+      if (Executionorder.find(o => o === _inputs.port)) {
+
+      }
+      else {
+        if (!modelData.linkDataArray.find(o => o.topid === _inputs.port)) {
+          Executionorder.push(_inputs.port);
+        }
+      }
+
+    });
+
+    Executionorder.push(_node.name);
+
+    sorted_oports.forEach(_inputs => {
+      if (Executionorder.find(o => o === _inputs.port)) {
+
+      }
+      else {
+        if (!modelData.linkDataArray.find(o => o.frompid === _inputs.port)) {
+          Executionorder.push(_inputs.port);
+        }
+      }
+    });
+
+    sorted_iports.splice(0, sorted_iports.length);
+    sorted_oports.splice(0, sorted_oports.length);
+
+  });
+
+
+
+  funcs_with_out_inputs.forEach(_node => {
+
+    _node.inputs.forEach(_port => {
+
+      modelData.linkDataArray.forEach(_links => {
+        if (_links.topid == _port && _links.to == _node.key) {
+          modelData.nodeDataArray.forEach(_tmpnode => {
+            if (_links.from == _tmpnode.key) {
+              if (_tmpnode.IP_ports.length == 0) {
+                sorted_iports.push({ "port": _tmpnode.text, "type": "0" });
+              }
+              else {
+                if (modelData.linkDataArray.find(o => o.to === _tmpnode.key)) {
+
+                }
+                else {
+                  sorted_iports.push({ "port": _tmpnode.text, "type": "0" });
+                }
+                //sorted_iports.push({ "port": _tmpnode.name, "type": "1" });
+              }
+            }
+          });
+        }
+
+      });
+
+    });
+
+    _node.outputs.forEach(_port => {
+
+      modelData.linkDataArray.forEach(_links => {
+        if (_links.frompid == _port && _links.from == _node.key) {
+          modelData.nodeDataArray.forEach(_tmpnode => {
+            if (_links.to == _tmpnode.key) {
+              if (_tmpnode.OP_ports.length == 0) {
+                sorted_oports.push({ "port": _tmpnode.text, "type": "0" });
+              }
+              if (_tmpnode.IP_ports.length > 0 || _tmpnode.OP_ports.length > 0) {
+                //sorted_oports.push({ "port": _tmpnode.text, "type": "1" });
+              }
+            }
+          });
+        }
+
+      });
+
+    });
+
+
+
+    sorted_iports.forEach(_inputs => {
+
+      if (Executionorder.find(o => o === _inputs.port)) {
+
+      }
+      else {
+
+        if (!modelData.linkDataArray.find(o => o.topid === _inputs.port)) {
+          Executionorder.push(_inputs.port);
+        }
+      }
+
+    });
+
+    Executionorder.push(_node.name);
+
+    sorted_oports.forEach(_inputs => {
+      if (Executionorder.find(o => o === _inputs.port)) {
+
+      }
+      else {
+        if (!modelData.linkDataArray.find(o => o.frompid === _inputs.port)) {
+          Executionorder.push(_inputs.port);
+        }
+      }
+    });
+
+    sorted_iports.splice(0, sorted_iports.length);
+    sorted_oports.splice(0, sorted_oports.length);
+
+  });
+
+
+  this.messages =  Executionorder;
+  console.log(this.messages);
+  //this.diagrammessageService.sendMessage(JSON.stringify(model_save));
+
+  
 }
 
 printImage(){

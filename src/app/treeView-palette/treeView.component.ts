@@ -145,6 +145,8 @@ export class TreeViewComponent implements OnInit{
                           obj["type"] = this.inputArray[a].Type;
                           obj["color"] = this.inputArray[a].color;
                           obj["text"] = this.inputArray[a].text;
+                          obj["IP_ports"] = this.inputArray[a].Iports;
+                          obj["OP_ports"] = this.inputArray[a].Oports;
                           obj["group"] ="";
                           obj["grpName"] ="";
                           obj["isTreeLeaf"] = true;
@@ -156,6 +158,8 @@ export class TreeViewComponent implements OnInit{
                           obj["type"] = this.inputArray[a].Type;
                           obj["color"] = this.inputArray[a].color;
                           obj["text"] = this.inputArray[a].text;
+                          obj["IP_ports"] = this.inputArray[a].Iports;
+                          obj["OP_ports"] = this.inputArray[a].Oports;
                           obj["group"] ="";
                           obj["grpName"] ="";
                           obj["isTreeLeaf"] = true;
@@ -167,6 +171,8 @@ export class TreeViewComponent implements OnInit{
                           obj["type"] = this.inputArray[a].Type;
                           obj["color"] = this.inputArray[a].color;
                           obj["text"] = this.inputArray[a].text;
+                          obj["IP_ports"] = this.inputArray[a].Iports;
+                          obj["OP_ports"] = this.inputArray[a].Oports;
                           obj["group"] ="";
                           obj["grpName"] ="";
                           obj["isTreeLeaf"] = true;
@@ -175,6 +181,7 @@ export class TreeViewComponent implements OnInit{
                     }
   
                     this.treePalette.model = new go.TreeModel(this.paletteList);
+                    console.log(this.treePalette.model);
      }
 
     imageConverter(prop, picture) {
