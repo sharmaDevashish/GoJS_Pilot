@@ -517,8 +517,8 @@ saveFiles(){
   var model1=new Object();
   model1["Device"] = "grp1";
   model1["nodeList"] = new Object();
-  model1["nodeList"]["controllerList"] = [];
-  model1["nodeList"]["deviceList"] = [];
+  model1["nodeList"]["functionBlockList"] = [];
+  //model1["nodeList"]["deviceList"] = [];
   model1["nodeList"]["variableList"] = [];
   model1["connections"] = new Object();
   model1["connections"]["local"] = [];
@@ -528,8 +528,8 @@ saveFiles(){
   var model2=new Object();
   model2["Device"] = "grp2";
   model2["nodeList"] = new Object();
-  model2["nodeList"]["controllerList"] = [];
-  model2["nodeList"]["deviceList"] = [];
+  model2["nodeList"]["functionBlockList"] = [];
+  ///model2["nodeList"]["deviceList"] = [];
   model2["nodeList"]["variableList"] = [];
   model2["connections"] = new Object();
   model2["connections"]["local"] = [];
@@ -545,12 +545,12 @@ saveFiles(){
   
   for(var i=0;i<myModel.length;i++){
     if(myModel[i].group == "grp1"){
-      if(myModel[i].type.includes("controller")){
+      if(myModel[i].type.includes("controller") || myModel[i].type.includes("device")){
         var controllerListData = new Object();
         controllerListData["name"] = myModel[i].text;
         controllerListData["group"] = myModel[i].group;
         controllerListData["type"] = myModel[i].name;
-        model1["nodeList"]["controllerList"].push(controllerListData);
+        model1["nodeList"]["functionBlockList"].push(controllerListData);
       }
       if(myModel[i].type.includes("variable")){
         var variableListData = new Object();
@@ -559,20 +559,20 @@ saveFiles(){
         variableListData["type"] = myModel[i].name;
         model1["nodeList"]["variableList"].push(variableListData);
       }
-      if(myModel[i].type.includes("device")){
+      /*if(myModel[i].type.includes("device")){
         var deviceListData = new Object();
         deviceListData["name"] = myModel[i].text;
         deviceListData["group"] = myModel[i].group;
         deviceListData["type"] = myModel[i].name;
         model1["nodeList"]["deviceList"].push(deviceListData);
-      }
+      }*/
     }else{
-      if(myModel[i].type.includes("controller")){
+      if(myModel[i].type.includes("controller") || myModel[i].type.includes("device")){
         var controllerListData = new Object();
         controllerListData["name"] = myModel[i].text;
         controllerListData["group"] = myModel[i].group;
         controllerListData["type"] = myModel[i].name;
-        model2["nodeList"]["controllerList"].push(controllerListData);
+        model2["nodeList"]["functionBlockList"].push(controllerListData);
       }
       if(myModel[i].type.includes("variable")){
         var variableListData = new Object();
@@ -581,13 +581,13 @@ saveFiles(){
         variableListData["type"] = myModel[i].name;
         model2["nodeList"]["variableList"].push(variableListData);
       }
-      if(myModel[i].type.includes("device")){
+      /*if(myModel[i].type.includes("device")){
         var deviceListData = new Object();
         deviceListData["name"] = myModel[i].text;
         deviceListData["group"] = myModel[i].group;
         deviceListData["type"] = myModel[i].name;
         model2["nodeList"]["deviceList"].push(deviceListData);
-      }
+      }*/
     }
   }
   for(var i=0;i<myLinks.length;i++){

@@ -7,7 +7,7 @@
         <ngb-tab title="Properties">
             <ng-template ngbTabContent>
               <div><label>Key: </label>{{node.key}}</div>
-              <div><label>Group:{{node.group}}</label></div>
+              <div><label>Group:{{node.data.group}}</label></div>
               <div><label>Text: </label><input [(ngModel)]="data.text" name="text"></div>
               <div><label>Color: </label><input [(ngModel)]="data.color" name="color"></div>
               <div><label>Location: </label>{{node.location.x.toFixed(2)}}, {{node.location.y.toFixed(2)}}</div>
