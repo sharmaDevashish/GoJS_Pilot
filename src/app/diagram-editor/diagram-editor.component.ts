@@ -48,7 +48,8 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
       Description:"Device1 Desc",
       Iports:["PV","SV","PB","Ti","Td"],
       Oports:["MV"],
-      color: "#18499e"
+      color: "#18499e",
+      Exo:""
     },
     { category:"AndGate",
       Name:"AndGate",
@@ -58,7 +59,8 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
       Description:"AndGate Desc",
       Iports:["I1","I2"],
       Oports:["O1"],
-      color: "#18499e"
+      color: "#18499e",
+      Exo:""
     },
     { category:"Not Gate",
       Name:"NotGate",
@@ -68,7 +70,8 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
       Description:"Device2 Desc",
       Iports:["I1","I2"],
       Oports:["O1"],
-      color: "#18499e"
+      color: "#18499e",
+      Exo:""
     },
     { category:"variable1",
       Name:"variable1",
@@ -78,7 +81,8 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
       Description:"variable1 Desc",
       Iports:[],
       Oports:[],
-      color: "#18499e"
+      color: "#18499e",
+      Exo:""
     },
     { category:"variable2",
       Name:"variable2",
@@ -88,7 +92,8 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
       Description:"variable2 Desc",
       Iports:[],
       Oports:[],
-      color: "#18499e"
+      color: "#18499e",
+      Exo:""
     },
     {
       category:"comment",
@@ -99,7 +104,8 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
       Description:"comment Desc",
       Iports:[],
       Oports:[],
-      color: "#FFFF00"
+      color: "#FFFF00",
+      Exo:""
     }];
 
     
@@ -154,13 +160,13 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
                 var oport=this.makePort(templateItem.Oports[j],false);
                 _makeportsoutput.push(oport);
                 }
-                this.makeTemplate(this.inputArray[it].Name,
+                this.makeTemplate(this.inputArray[i].Name,
                     this.inputArray[i].Type,
                     this.inputArray[i].text,
                     this.inputArray[i].color,
                     _makeportsinput,
                     _makeportsoutput,
-                    locx,locy
+                    locx,locy,this.inputArray[it].Exo
                 );
               }
             }
@@ -210,7 +216,7 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
                this.inputArray[it].color,
                _makeportsinput,
                _makeportsoutput,
-               "0","0"
+               "0","0",this.inputArray[it].Exo
               );         
       }else{
         {
@@ -303,7 +309,7 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
     return panel;
   }
 
-  public makeTemplate(name,typename,text, background, inports, outports,x,y) {
+  public makeTemplate(name,typename,text, background, inports, outports,x,y,exo) {
     const ggm = go.GraphObject.make; 
  
     if(!typename.includes("variable")){
@@ -354,10 +360,19 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
               
             ggm(go.Panel, "Table",
                 {padding:0},
+              ggm(go.TextBlock, exo,
+                {
+                  text:exo,
+                  row: 0,
+                  margin: 3,
+                  maxSize: new go.Size(80, NaN),
+                  stroke: "#fff",
+                  font: "12px Noto Sans,Regular"
+                },new go.Binding("text", "exo").makeTwoWay()),
               ggm(go.TextBlock, name,
                 {
                   text:name,
-                  row: 0,
+                  row: 1,
                   margin: 3,
                   maxSize: new go.Size(80, NaN),
                   stroke: "#fff",
@@ -366,7 +381,7 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
               ggm(go.TextBlock,
                 {
                   text:text,
-                  row: 1,
+                  row: 2,
                   margin:  3,
                   editable: true,
                   maxSize: new go.Size(80, 40),
@@ -414,6 +429,16 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
              toLinkable: true, toLinkableSelfNode: false, toLinkableDuplicates: true
            }),
          ggm(go.Panel, "Table",
+          ggm(go.TextBlock,name,
+            {
+              row: 1,
+              margin: 3,
+              editable: true,
+              maxSize: new go.Size(80, 40),
+              stroke: "#000",
+              font: "bold 14px Noto Sans"
+            },
+            new go.Binding("text", name).makeTwoWay()),
            ggm(go.TextBlock,name,
              {
                row: 1,
@@ -522,7 +547,7 @@ saveFiles(){
   model1["connections"]["local"] = [];
   model1["connections"]["incoming"] = [];
   model1["connections"]["outgoing"] = [];
-  model1["executionOrder"] = [];
+  //model1["executionOrder"] = [];
   
   var model2=new Object();
   model2["Device"] = "grp2";
@@ -533,7 +558,7 @@ saveFiles(){
   model2["connections"]["local"] = [];
   model2["connections"]["incoming"] = [];
   model2["connections"]["outgoing"] = [];
-  model2["executionOrder"] = [];
+  //model2["executionOrder"] = [];
 
   var myModel = [];
   var myLinks = [];
@@ -613,7 +638,7 @@ saveFiles(){
         }
        }
   }
-  model1["executionOrder"].push(this.messages);
+  //model1["executionOrder"].push(this.messages);
 
   for(var i=0;i<myLinks.length;i++){
     var linkData = new Object();
@@ -653,7 +678,7 @@ saveFiles(){
         }
       }
   }
-  model2["executionOrder"].push(this.messages);
+  //model2["executionOrder"].push(this.messages);
 
   console.log(JSON.stringify(model1));
   console.log(JSON.stringify(model2));
@@ -1448,13 +1473,22 @@ generateXML() {
     sorted_oports.splice(0, sorted_oports.length);
 
   });
-
-
-  this.messages =  Executionorder;
-  console.log(this.messages);
-  //this.diagrammessageService.sendMessage(JSON.stringify(model_save));
-
   
+  this.messages =  Executionorder;
+  this.assignExo();
+  //this.diagrammessageService.sendMessage(JSON.stringify(model_save));
+}
+
+assignExo(){
+  for(var a=0;a<this.messages.length;a++){
+    for(var b=0;b<this.diagram.model.nodeDataArray.length;b++){
+      if(this.messages[a] == this.diagram.model.nodeDataArray[b]["text"]){
+        this.diagram.model.startTransaction("giveExo");
+        this.model.setDataProperty(this.diagram.model.nodeDataArray[b], "exo", a);
+        this.diagram.model.commitTransaction("giveExo");
+      }
+    }
+  }
 }
 
 printImage(){
