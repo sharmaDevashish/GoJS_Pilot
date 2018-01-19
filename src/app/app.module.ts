@@ -12,6 +12,8 @@ import { EditorComponent} from './editor-component/editor.component'
 import { TreeViewComponent } from './treeView-palette/treeView.component'
 
 import { ExampleService } from './app-service/app.component.service';
+import { ServerSocket } from './websocket-Service/webSocket.service';
+import { WebSocketService } from 'angular2-websocket-service';
 import { AppRoutingModule } from './/app-routing.module';
 
 
@@ -33,7 +35,7 @@ import { AppRoutingModule } from './/app-routing.module';
     NgbModule.forRoot(),
     AppRoutingModule
   ],
-  providers: [ExampleService],
+  providers: [ExampleService,ServerSocket,WebSocketService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

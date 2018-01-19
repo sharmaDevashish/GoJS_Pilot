@@ -24,8 +24,7 @@ export class TreeViewComponent implements OnInit{
         Description:"Device1 Desc",
         Iports:["PV","SV","PB","Ti","Td"],
         Oports:["MV"],
-        color: "#18499e",
-        exo:""
+        color: "#18499e"
       },
       { category:"AndGate",
         Name:"AndGate",
@@ -35,8 +34,7 @@ export class TreeViewComponent implements OnInit{
         Description:"AndGate Desc",
         Iports:["I1","I2"],
         Oports:["O1"],
-        color: "#18499e",
-        exo:""
+        color: "#18499e"
       },
       { category:"Not Gate",
         Name:"NotGate",
@@ -46,8 +44,7 @@ export class TreeViewComponent implements OnInit{
         Description:"Device2 Desc",
         Iports:["I1","I2"],
         Oports:["O1"],
-        color: "#18499e",
-        exo:""
+        color: "#18499e"
       },
       { category:"variable1",
         Name:"variable1",
@@ -57,8 +54,7 @@ export class TreeViewComponent implements OnInit{
         Description:"variable1 Desc",
         Iports:[],
         Oports:[],
-        color: "#18499e",
-        exo:""
+        color: "#18499e"
       },
       { category:"variable2",
         Name:"variable2",
@@ -68,8 +64,7 @@ export class TreeViewComponent implements OnInit{
         Description:"variable2 Desc",
         Iports:[],
         Oports:[],
-        color: "#18499e",
-        exo:""
+        color: "#18499e"
       }];
       paletteList:any;
     
@@ -155,7 +150,7 @@ export class TreeViewComponent implements OnInit{
                           obj["group"] ="";
                           obj["grpName"] ="";
                           obj["isTreeLeaf"] = true;
-                          obj["exo"] = this.inputArray[a].exo;
+                          
                           this.paletteList.push(obj);
                         }
                         if(this.inputArray[a].Type.includes("controller")){
@@ -169,7 +164,7 @@ export class TreeViewComponent implements OnInit{
                           obj["group"] ="";
                           obj["grpName"] ="";
                           obj["isTreeLeaf"] = true;
-                          obj["exo"] = this.inputArray[a].exo;
+                          
                           this.paletteList.push(obj);
                         }
                         if(this.inputArray[a].Type.includes("device")){
@@ -183,7 +178,7 @@ export class TreeViewComponent implements OnInit{
                           obj["group"] ="";
                           obj["grpName"] ="";
                           obj["isTreeLeaf"] = true;
-                          obj["exo"] = this.inputArray[a].exo;
+                          
                           this.paletteList.push(obj);
                         }
                     }

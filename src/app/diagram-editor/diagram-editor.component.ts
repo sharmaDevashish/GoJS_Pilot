@@ -3,6 +3,9 @@ import { Router, NavigationExtras } from "@angular/router";
 import * as go from 'gojs';
 import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
 import { Group } from 'gojs';
+import { WebSocketService } from 'angular2-websocket-service'
+import { Subscription } from 'rxjs/Subscription'
+import { ServerSocket } from '../websocket-Service/webSocket.service'
 //import { RealtimeDragSelectingTool } from "gojs";
 
 
@@ -21,6 +24,7 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
   selectedNode:any;
   flag:boolean;
   messages:any;
+  private socketSubscription: Subscription;
   
   @ViewChild('diagramDiv')
   private diagramRef: ElementRef;
@@ -48,8 +52,7 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
       Description:"Device1 Desc",
       Iports:["PV","SV","PB","Ti","Td"],
       Oports:["MV"],
-      color: "#18499e",
-      Exo:""
+      color: "#18499e"
     },
     { category:"AndGate",
       Name:"AndGate",
@@ -59,8 +62,7 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
       Description:"AndGate Desc",
       Iports:["I1","I2"],
       Oports:["O1"],
-      color: "#18499e",
-      Exo:""
+      color: "#18499e"
     },
     { category:"Not Gate",
       Name:"NotGate",
@@ -70,8 +72,7 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
       Description:"Device2 Desc",
       Iports:["I1","I2"],
       Oports:["O1"],
-      color: "#18499e",
-      Exo:""
+      color: "#18499e"
     },
     { category:"variable1",
       Name:"variable1",
@@ -81,8 +82,7 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
       Description:"variable1 Desc",
       Iports:[],
       Oports:[],
-      color: "#18499e",
-      Exo:""
+      color: "#18499e"
     },
     { category:"variable2",
       Name:"variable2",
@@ -92,8 +92,7 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
       Description:"variable2 Desc",
       Iports:[],
       Oports:[],
-      color: "#18499e",
-      Exo:""
+      color: "#18499e"
     },
     {
       category:"comment",
@@ -104,8 +103,7 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
       Description:"comment Desc",
       Iports:[],
       Oports:[],
-      color: "#FFFF00",
-      Exo:""
+      color: "#FFFF00"
     }];
 
     
@@ -166,7 +164,7 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
                     this.inputArray[i].color,
                     _makeportsinput,
                     _makeportsoutput,
-                    locx,locy,this.inputArray[it].Exo
+                    locx,locy
                 );
               }
             }
@@ -216,7 +214,7 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
                this.inputArray[it].color,
                _makeportsinput,
                _makeportsoutput,
-               "0","0",this.inputArray[it].Exo
+               "0","0"
               );         
       }else{
         {
@@ -309,7 +307,7 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
     return panel;
   }
 
-  public makeTemplate(name,typename,text, background, inports, outports,x,y,exo) {
+  public makeTemplate(name,typename,text, background, inports, outports,x,y) {
     const ggm = go.GraphObject.make; 
  
     if(!typename.includes("variable")){
@@ -360,9 +358,9 @@ export class DiagramEditorComponent implements OnInit, AfterViewInit {
               
             ggm(go.Panel, "Table",
                 {padding:0},
-              ggm(go.TextBlock, exo,
+              ggm(go.TextBlock, "",
                 {
-                  text:exo,
+                  text:"",
                   row: 0,
                   margin: 3,
                   maxSize: new go.Size(80, NaN),
@@ -539,6 +537,7 @@ save(){
 saveFiles(){
   this.generateXML();
   var model1=new Object();
+  var WSModel = [];
   model1["Device"] = "grp1";
   model1["nodeList"] = new Object();
   model1["nodeList"]["functionBlockList"] = [];
@@ -678,11 +677,49 @@ saveFiles(){
         }
       }
   }
-  //model2["executionOrder"].push(this.messages);
-
   console.log(JSON.stringify(model1));
   console.log(JSON.stringify(model2));
+  this.sendDataDevice1(model1);
+  this.sendDataDevice2(model2);
 }
+
+sendDataDevice1(model1){
+  
+  const stream = this.socket.connect()
+   this.socketSubscription = stream.subscribe(message => {
+      //console.log('received message from server: ', message)
+      //{"values":[{"variable":"MV","data":{"value":14.347,"time":"2017-11-23T05:46:12.032Z"}},{"variable":"SV","data":{"value":9.288,"time":"2017-11-23T05:46:12.032Z"}},{"variable":"SV","data":{"value":0.407,"time":"2017-11-23T05:46:12.032Z"}}]}
+      //this.stdata.push('{"variable":"MV","value": 10 * Math.random() ,"time":"2017-11-23 05:46:12.032"}');
+      //console.log("streamdata ");
+      //console.log(this.stdata);
+    })
+     // send message to server, if the socket is not connected it will be sent 
+     // as soon as the connection becomes available thanks to QueueingSubject
+    
+     this.socket.send({"command": "RecieveProgram","data":btoa(model1)});
+     console.log("ExecuteCommand");
+     setTimeout(()=>{this.socket.send({ "command": "ExecuteCommand", "data": "makeruntime" })},5000);
+}
+
+sendDataDevice2(model2){
+  
+  const stream = this.socket.connect()
+   this.socketSubscription = stream.subscribe(message => {
+      //console.log('received message from server: ', message)
+      //{"values":[{"variable":"MV","data":{"value":14.347,"time":"2017-11-23T05:46:12.032Z"}},{"variable":"SV","data":{"value":9.288,"time":"2017-11-23T05:46:12.032Z"}},{"variable":"SV","data":{"value":0.407,"time":"2017-11-23T05:46:12.032Z"}}]}
+      //this.stdata.push('{"variable":"MV","value": 10 * Math.random() ,"time":"2017-11-23 05:46:12.032"}');
+      //console.log("streamdata ");
+      //console.log(this.stdata);
+    })
+     // send message to server, if the socket is not connected it will be sent 
+     // as soon as the connection becomes available thanks to QueueingSubject
+
+     this.socket.send({"command": "RecieveProgram","data":btoa(model2)});
+     console.log("ExecuteCommand");
+     setTimeout(()=>{this.socket.send({ "command": "ExecuteCommand", "data": "makeruntime" })},5000);
+  
+}
+
 
 zoomIn(){
   this.diagram.commandHandler.increaseZoom();
@@ -1484,7 +1521,7 @@ assignExo(){
     for(var b=0;b<this.diagram.model.nodeDataArray.length;b++){
       if(this.messages[a] == this.diagram.model.nodeDataArray[b]["text"]){
         this.diagram.model.startTransaction("giveExo");
-        this.model.setDataProperty(this.diagram.model.nodeDataArray[b], "exo", a);
+        this.model.setDataProperty(this.diagram.model.nodeDataArray[b], "exo", a+1);
         this.diagram.model.commitTransaction("giveExo");
       }
     }
@@ -1524,7 +1561,7 @@ printImage(){
     this.router.navigate(["preview"]);
 }
 
-  constructor(private router: Router) {
+  constructor(private router: Router,private socket: ServerSocket) {
     this.drawDiagramEditor();
 }
 
